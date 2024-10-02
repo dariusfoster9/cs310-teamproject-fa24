@@ -69,6 +69,8 @@ public class Punch {
         s.append(',').append(' ');
         s.append("Terminal ID: ");
         s.append(terminalId);
+        s.append("Original Time stamp: ");
+        s.append('(').append(originalTimestamp).append(')');
         return s.toString();
     }
 }
