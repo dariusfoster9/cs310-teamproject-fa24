@@ -15,8 +15,8 @@ public class Punch {
     private int terminalId; 
     private Badge badge;
     private LocalDateTime originalTimestamp; 
-    private LocalDateTime adjustedTimestamp; 
-    private PunchAdjustmentType adjustmentType; 
+    public LocalDateTime adjustedTimestamp; 
+    public PunchAdjustmentType adjustmentType; 
 
     // Constructor for a new Punch (no ID)
     public Punch(int terminalId, Badge badge, EventType punchType) {
@@ -61,16 +61,25 @@ public class Punch {
     }
 
     @Override
-    public String toString() {
-        
-         StringBuilder s = new StringBuilder();
-        s.append('#').append(id).append(' ');
-        s.append('(').append(badge).append(')');
-        s.append(',').append(' ');
-        s.append("Terminal ID: ");
-        s.append(terminalId);
-        s.append("Original Time stamp: ");
-        s.append('(').append(originalTimestamp).append(')');
-        return s.toString();
+public String toString() {
+    
+    StringBuilder s = new StringBuilder();
+    s.append('#').append(id).append(' ');
+    s.append('(').append(badge).append(')');
+    s.append(',').append(' ');
+    s.append("Terminal ID: ");
+    s.append(terminalId);
+    s.append(", Original Time stamp: ");
+    s.append('(').append(originalTimestamp).append(')');
+    
+    if (adjustedTimestamp != null) {
+        s.append(", Adjusted Timestamp: ").append(adjustedTimestamp);
     }
+    
+    if (adjustmentType != null) {
+        s.append(", Adjustment Type: ").append(adjustmentType);
+    }
+    
+    return s.toString();
+}
 }
