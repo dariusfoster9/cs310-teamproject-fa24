@@ -1,29 +1,36 @@
 package edu.jsu.mcis.cs310.tas_fa24;
 
+import java.time.LocalTime;
 import java.util.Map;
 
 public class Shift{
-    private String Start,Stop,Parameters;
-    private int lunchDuration,shiftDuration;
+    private final int id;
+    private final String description;
+    private final LocalTime start,stop,lunchstart,lunchstop;
+    private final int lunchDuration,shiftDuration;
     
-    public Shift(Map<String, Object> ShiftInfo){
-        this.Start=(String)ShiftInfo.get("Start");
-        this.Stop=(String)ShiftInfo.get("Stop");
-        this.Parameters=(String)ShiftInfo.get("Parameters");
-        this.lunchDuration=(int)(ShiftInfo.get("lunchDuration"));
-        this.shiftDuration=(int)(ShiftInfo.get("shiftDuration"));
+    public Shift(int id, String description, String start, String stop, String lunchstart, 
+            String lunchstop,int lunchDuration, int shiftDuration)
+        {this.start=LocalTime.parse(start);
+        this.stop=LocalTime.parse(stop);
+        this.lunchstart=LocalTime.parse(lunchstart);
+        this.lunchstop=LocalTime.parse(lunchstop);
+        this.id=id;
+        this.description=description;
+        this.lunchDuration=lunchDuration;
+        this.shiftDuration=shiftDuration;
 
     }
-    public String getStart(){
-        return Start;
+    public LocalTime getStart(){
+        return start;
     }
     
-    public String getStop(){
-        return Stop;
+    public LocalTime getStop(){
+        return stop;
     }
     
-    public String getParameters(){
-        return Parameters;
+    public String getDescription(){
+        return description;
     }    
     
     public int getlunchDuration(){
@@ -35,17 +42,15 @@ public class Shift{
     }
     
     @Override
-    public String toString(){
-        StringBuilder s=new StringBuilder();
-        
-        s.append("Shift Info: ");
-        s.append("Start: ").append(Start).append(", ");
-        s.append("Stop: ").append(Stop).append(", ");
-        s.append("Parameters: ").append(Parameters).append(", ");
-        s.append("Lunch Duration: ").append(Start).append(" minutes, ");
-        s.append("Shift Duration: ").append(Start).append(" minutes.");
-        
-        
-        return s.toString();
+    public String toString() {
+        return String.format("%s: %s - %s (%d minutes); Lunch: %s - %s (%d minutes)",
+                description,
+                start, 
+                stop, 
+                shiftDuration, 
+                lunchstart, 
+                lunchstop, 
+                lunchDuration);
+
     }
 }
