@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  */
 public class PunchDAO {
 
-    private static final String QUERY_FIND = "SELECT * FROM punch WHERE id = ?";
+    private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";
     
     private final DAOFactory daoFactory;
     
@@ -43,16 +43,16 @@ public class PunchDAO {
                         int terminalid = rs.getInt("terminalid");
                         String badgeid = rs.getString("badgeid");
 
-                        LocalDateTime originalTimestamp = rs.getTimestamp("originaltimestamp") != null 
-                                                           ? rs.getTimestamp("originaltimestamp").toLocalDateTime()
+                        LocalDateTime originalTimestamp = rs.getTimestamp("timestamp") != null 
+                                                           ? rs.getTimestamp("timestamp").toLocalDateTime()
                                                            : null;
                         
-                        LocalDateTime adjustedTimestamp = rs.getTimestamp("adjustedtimestamp") != null 
-                                                            ? rs.getTimestamp("adjustedtimestamp").toLocalDateTime()
+                        LocalDateTime adjustedTimestamp = rs.getTimestamp("timestamp") != null 
+                                                            ? rs.getTimestamp("timestamp").toLocalDateTime()
                                                             : null;
                         
                         PunchAdjustmentType adjustmentType = null;
-                        String adjustmentTypeString = rs.getString("adjustmenttype");
+                        String adjustmentTypeString = rs.getString("eventtypeid");
                         if (adjustmentTypeString != null) {
                             try {
                                 adjustmentType = PunchAdjustmentType.valueOf(adjustmentTypeString);
