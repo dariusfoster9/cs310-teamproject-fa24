@@ -5,38 +5,38 @@ import java.time.format.DateTimeFormatter;
 
 public class Punch {
     private final int id;
-    private final int terminalId;
-    private final String badgeId;
+    private final int terminalid;
+    private final String badgeid;
     private final LocalDateTime originalTimestamp;
     private LocalDateTime adjustedTimestamp;
     private PunchAdjustmentType adjustmentType;
 
     // Constructor for a new punch without an ID
-    public Punch(int terminalId, String badgeId) {
+    public Punch(int terminalid, String badgeid) {
         this.id = -1; // -1 signifies no ID
-        this.terminalId = terminalId;
-        this.badgeId = badgeId;
+        this.terminalid = terminalid;
+        this.badgeid = badgeid;
         this.originalTimestamp = LocalDateTime.now();
     }
 
     // Constructor for an existing punch with an ID
-    public Punch(int id, int terminalId, String badgeId, LocalDateTime originalTimestamp) {
+    public Punch(int id, int terminalid, String badgeid, LocalDateTime originalTimestamp) {
         this.id = id;
-        this.terminalId = terminalId;
-        this.badgeId = badgeId;
+        this.terminalid = terminalid;
+        this.badgeid = badgeid;
         this.originalTimestamp = originalTimestamp;
     }
 
-    public int getId() {
+    public int getid() {
         return id;
     }
 
-    public int getTerminalId() {
-        return terminalId;
+    public int getTerminalid() {
+        return terminalid;
     }
 
-    public String getBadgeId() {
-        return badgeId;
+    public String getBadgeid() {
+        return badgeid;
     }
 
     public LocalDateTime getOriginalTimestamp() {
@@ -62,15 +62,15 @@ public class Punch {
     public String printOriginal() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
         String timestamp = originalTimestamp.format(formatter);
-        return String.format("#%s CLOCK IN: %s", badgeId, timestamp);
+        return String.format("#%s CLOCK IN: %s", badgeid, timestamp);
     }
 
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append("Punch ID: #").append(id).append(" ");
-        s.append("(").append(badgeId).append(") ");
-        s.append("Terminal ID: ").append(terminalId).append(", ");
+        s.append("(").append(badgeid).append(") ");
+        s.append("Terminal ID: ").append(terminalid).append(", ");
         s.append("Original Timestamp: ").append(originalTimestamp);
 
         if (adjustedTimestamp != null) {
