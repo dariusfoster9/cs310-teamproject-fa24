@@ -40,8 +40,8 @@ public class PunchDAO {
                     rs = ps.getResultSet();
 
                     while (rs.next()) {
-                        int terminalId = rs.getInt("terminalid");
-                        String badgeId = rs.getString("badgeid");
+                        int terminalid = rs.getInt("terminalid");
+                        String badgeid = rs.getString("badgeid");
 
                         LocalDateTime originalTimestamp = rs.getTimestamp("originaltimestamp") != null 
                                                            ? rs.getTimestamp("originaltimestamp").toLocalDateTime()
@@ -62,7 +62,7 @@ public class PunchDAO {
                             }
                         }
 
-                        punch = new Punch(id, terminalId, badgeId, originalTimestamp);
+                        punch = new Punch(id, terminalid, badgeid, originalTimestamp);
                         punch.setAdjustedTimestamp(adjustedTimestamp);
                         punch.setAdjustmentType(adjustmentType);
                     }
