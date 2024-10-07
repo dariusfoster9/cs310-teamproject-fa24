@@ -51,8 +51,6 @@ public class ShiftDAO {
                         int shiftDuration=(int)Duration.between(shiftStartTime,shiftStopTime).toMinutes();
                         //-------------------------------------------
                         
-                        //int lunchDuration=rs.getInt("lunchthreshold");
-                        //int shiftDuration=rs.getInt("roundinterval");
                         
 
                         shift=new Shift(id,description,start,stop,lunchstart,lunchstop,lunchDuration,shiftDuration);
@@ -99,7 +97,7 @@ public class ShiftDAO {
 
                     if (rs.next()) {
                         int shiftId=rs.getInt("shiftid");
-                        shift=find(shiftId); // Call the first find() method
+                        shift=find(shiftId);
                     }else{
                         System.out.println("Badge ID Results: "+badge.getId());
                     }
