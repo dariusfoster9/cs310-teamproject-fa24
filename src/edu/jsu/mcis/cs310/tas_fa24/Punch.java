@@ -69,7 +69,7 @@ public class Punch {
     public String printOriginal() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
         String timestamp = originaltimestamp.format(formatter);
-        return String.format("#%s CLOCK IN: %s", badgeid, timestamp);
+        return String.format("#%s CLOCK IN: %S", badgeid, timestamp);
     }
 
     @Override
