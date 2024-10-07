@@ -48,12 +48,12 @@ public class Employee {
     public String toString() {
         
         StringBuilder d = new StringBuilder();
-        String date_mod = active.toString().substring(0,10);
-        d.append(date_mod.substring(5, 7));
+        String date_mod = active.toString().substring(0,10); //splits string 
+        d.append(date_mod.substring(5, 7)); // gets the month
         d.append("/");
-        d.append(date_mod.substring(8, 10));
+        d.append(date_mod.substring(8, 10)); // gets the day
         d.append("/");
-        d.append(date_mod.substring(0, 4));
+        d.append(date_mod.substring(0, 4)); //gets the year
         return String.format("ID #%d: %s, %s %s (#%s), Type: %s, Department: %s, Active: %s", 
             id, lastname, firstname, middlename, badge.getId(), employeeType.toString(), 
             department.getDescription() , d.toString());
