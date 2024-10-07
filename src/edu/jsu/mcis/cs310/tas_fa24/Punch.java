@@ -4,80 +4,91 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Punch {
-    private final int id;
-    private final int terminalid;
-    private final String badgeid;
-    private final LocalDateTime originalTimestamp;
-    private LocalDateTime adjustedTimestamp;
-    private PunchAdjustmentType adjustmentType;
+    // Attributes
+    private final int id; // Punch ID
+    private final int terminalid; // ID of the terminal where the punch was made
+    private final String badgeid; // Badge ID of the employee
+    private final LocalDateTime originaltimestamp; // Original punch timestamp
+    private LocalDateTime adjustedtimestamp; // Adjusted punch timestamp (if any)
+    private PunchAdjustmentType adjustmentType; // Type of adjustment (if any)
 
-    // Constructor for a new punch without an ID
+    // Constructor for a new punch (without ID)
     public Punch(int terminalid, String badgeid) {
         this.id = -1; // -1 signifies no ID
         this.terminalid = terminalid;
         this.badgeid = badgeid;
-        this.originalTimestamp = LocalDateTime.now();
+        this.originaltimestamp = LocalDateTime.now(); // Set to current time
+        this.adjustedtimestamp = null; // No adjusted timestamp initially
+        this.adjustmentType = null; // No adjustment type initially
     }
 
-    // Constructor for an existing punch with an ID
-    public Punch(int id, int terminalid, String badgeid, LocalDateTime originalTimestamp) {
+    // Constructor for an existing punch (with ID)
+    public Punch(int id, int terminalid, String badgeid, LocalDateTime originaltimestamp) {
         this.id = id;
         this.terminalid = terminalid;
         this.badgeid = badgeid;
-        this.originalTimestamp = originalTimestamp;
+        this.originaltimestamp = originaltimestamp;
+        this.adjustedtimestamp = null; // Initialize as null
+        this.adjustmentType = null; // Initialize as null
     }
 
-    public int getid() {
-        return id;
+    // Getters
+    public int getId() {
+        return id; // Return punch ID
     }
 
     public int getTerminalid() {
-        return terminalid;
+        return terminalid; // Return terminal ID
     }
 
     public String getBadgeid() {
-        return badgeid;
+        return badgeid; // Return badge ID
     }
 
-    public LocalDateTime getOriginalTimestamp() {
-        return originalTimestamp;
+    public LocalDateTime getOriginaltimestamp() {
+        return originaltimestamp; // Return original timestamp
     }
 
-    public LocalDateTime getAdjustedTimestamp() {
-        return adjustedTimestamp;
+    public LocalDateTime getAdjustedtimestamp() {
+        return adjustedtimestamp; // Return adjusted timestamp
     }
 
-    public void setAdjustedTimestamp(LocalDateTime adjustedTimestamp) {
-        this.adjustedTimestamp = adjustedTimestamp;
+    // Setters
+    public void setAdjustedTimestamp(LocalDateTime adjustedtimestamp) {
+        this.adjustedtimestamp = adjustedtimestamp; // Set adjusted timestamp
     }
 
     public PunchAdjustmentType getAdjustmentType() {
-        return adjustmentType;
+        return adjustmentType; // Return adjustment type
     }
 
     public void setAdjustmentType(PunchAdjustmentType adjustmentType) {
-        this.adjustmentType = adjustmentType;
+        this.adjustmentType = adjustmentType; // Set adjustment type
     }
 
     public String printOriginal() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
-        String timestamp = originalTimestamp.format(formatter);
+        String timestamp = originaltimestamp.format(formatter);
         return String.format("#%s CLOCK IN: %s", badgeid, timestamp);
     }
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append("Punch ID: #").append(id).append(" ");
-        s.append("(").append(badgeid).append(") ");
-        s.append("Terminal ID: ").append(terminalid).append(", ");
-        s.append("Original Timestamp: ").append(originalTimestamp);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/DD/yyyy HH:mm:ss");
+        
+        // Format original timestamp for output
+        String originaltime = originaltimestamp.format(formatter);
+        String result = String.format("#%s: Terminal %d, Original Timestamp: %s", 
+                                       badgeid, 
+                                       terminalid, 
+                                       originaltime);
 
-        if (adjustedTimestamp != null) {
-            s.append(", Adjusted Timestamp: ").append(adjustedTimestamp);
-            s.append(", Adjustment Type: ").append(adjustmentType);
+        // Include adjusted timestamp if it exists
+        if (adjustedtimestamp != null) {
+            String adjustedTime = adjustedtimestamp.format(formatter);
+            result += String.format("; Adjusted Timestamp: %s (%s)", adjustedTime, adjustmentType);
         }
-
-        return s.toString();
+        
+        return result; // Return complete string representation
     }
 }
