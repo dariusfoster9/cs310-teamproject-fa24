@@ -43,7 +43,7 @@ public class EmployeeDAO {
                 Badge badge = new BadgeDAO(daoFactory).find(rs.getString("badgeid"));
                 Department department = new DepartmentDAO(daoFactory).find(rs.getInt("departmentid"));
                 Shift shift = new ShiftDAO(daoFactory).find(rs.getInt("shiftid"));
-                EmployeeType employeeType = EmployeeType.values()[rs.getInt("employeetype")];
+                EmployeeType employeeType = EmployeeType.values()[rs.getInt("employeetypeid")];
                 
                 employee = new Employee(id, firstname, middlename, lastname, active, badge, department, shift, employeeType);
             }
