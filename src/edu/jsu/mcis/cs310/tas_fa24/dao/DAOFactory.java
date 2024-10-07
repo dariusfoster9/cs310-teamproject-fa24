@@ -11,9 +11,10 @@ public final class DAOFactory {
     private final String url, username, password;
     
     private Connection conn = null;
+    
 
     public DAOFactory(String prefix) {
-
+         
         DAOProperties properties = new DAOProperties(prefix);
 
         this.url = properties.getProperty(PROPERTY_URL);
@@ -47,4 +48,5 @@ public final class DAOFactory {
     public PunchDAO getPunchDAO() {
         return new PunchDAO(this);
 }
+
 }

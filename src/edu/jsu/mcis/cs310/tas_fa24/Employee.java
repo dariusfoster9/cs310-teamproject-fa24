@@ -46,9 +46,17 @@ public class Employee {
 
     @Override
     public String toString() {
+        
+        StringBuilder d = new StringBuilder();
+        String date_mod = active.toString().substring(0,10);
+        d.append(date_mod.substring(5, 7));
+        d.append("/");
+        d.append(date_mod.substring(8, 10));
+        d.append("/");
+        d.append(date_mod.substring(0, 4));
         return String.format("ID #%d: %s, %s %s (#%s), Type: %s, Department: %s, Active: %s", 
             id, lastname, firstname, middlename, badge.getId(), employeeType.toString(), 
-            department.getDescription(), active.toString());
+            department.getDescription() , d.toString());
     }
 }
 
