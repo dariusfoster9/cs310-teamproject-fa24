@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class PunchDAO {
 
     private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";
+   
     
     private final DAOFactory daoFactory;
     
@@ -92,5 +93,9 @@ public class PunchDAO {
         }
 
         return punch;
+    }
+
+    public int create(Punch p1) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
