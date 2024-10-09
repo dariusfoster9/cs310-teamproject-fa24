@@ -10,17 +10,13 @@ import java.sql.Statement;
 import java.sql.Timestamp; 
 import java.time.LocalDateTime;
 
-/**
- *
- * author BentM
- */
 public class PunchDAO {
 
     private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";
    
     
     private final DAOFactory daoFactory;
-    
+
     PunchDAO(DAOFactory daoFactory) {
         this.daoFactory = daoFactory;
     }
@@ -29,10 +25,10 @@ public class PunchDAO {
         Punch punch = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        
+
         try {
             Connection conn = daoFactory.getConnection();
-            
+
             if (conn.isValid(0)) {
                 ps = conn.prepareStatement(QUERY_FIND);
                 ps.setInt(1, id);
@@ -45,29 +41,30 @@ public class PunchDAO {
                     while (rs.next()) {
                         int terminalid = rs.getInt("terminalid");
                         String badgeid = rs.getString("badgeid");
+                        LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
+                        int eventTypeId = rs.getInt("eventtypeid");
 
-                        LocalDateTime originalTimestamp = rs.getTimestamp("timestamp") != null 
-                                                           ? rs.getTimestamp("timestamp").toLocalDateTime()
-                                                           : null;
-                        
-                        LocalDateTime adjustedTimestamp = rs.getTimestamp("timestamp") != null 
-                                                            ? rs.getTimestamp("timestamp").toLocalDateTime()
-                                                            : null;
-                        
+                        Punch punchFromDB = new Punch(id, terminalid, badgeid, originalTimestamp, eventTypeId);
+
+                        // If there is an adjusted timestamp, set it (could be null)
+                        LocalDateTime adjustedTimestamp = rs.getTimestamp("timestamp") != null
+                                ? rs.getTimestamp("timestamp").toLocalDateTime()
+                                : null;
+                        punchFromDB.setAdjustedTimestamp(adjustedTimestamp);
+
+                        // Retrieve and set the adjustment type (if any)
                         PunchAdjustmentType adjustmentType = null;
                         String adjustmentTypeString = rs.getString("eventtypeid");
                         if (adjustmentTypeString != null) {
                             try {
                                 adjustmentType = PunchAdjustmentType.valueOf(adjustmentTypeString);
                             } catch (IllegalArgumentException e) {
-                                
                                 System.err.println("Invalid adjustment type: " + adjustmentTypeString);
                             }
                         }
+                        punchFromDB.setAdjustmentType(adjustmentType);
 
-                        punch = new Punch(id, terminalid, badgeid, originalTimestamp);
-                        punch.setAdjustedTimestamp(adjustedTimestamp);
-                        punch.setAdjustmentType(adjustmentType);
+                        punch = punchFromDB;
                     }
                 }
             }
