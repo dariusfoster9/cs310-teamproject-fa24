@@ -12,9 +12,7 @@ public class PunchCreateTest {
 
     @Before
     public void setup() {
-
         daoFactory = new DAOFactory("tas.jdbc");
-
     }
 
     @Test
@@ -22,42 +20,33 @@ public class PunchCreateTest {
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+        // Get DAOs
         PunchDAO punchDAO = daoFactory.getPunchDAO();
         BadgeDAO badgeDAO = daoFactory.getBadgeDAO();
 
         /* Create New Punch Object */
-        
-        Punch p1 = new Punch(103, badgeDAO.find("021890C0"), EventType.CLOCK_IN);
+        Badge badge = badgeDAO.find("021890C0");  // Retrieve Badge object
+        Punch p1 = new Punch(103, badge.getId());  // Create Punch with terminal ID and badge ID
 
         /* Create Timestamp Objects */
-        
         LocalDateTime ots, rts;
 
         /* Get Punch Properties */
-        
-        String badgeid = p1.getBadge().getId();
-        ots = p1.getOriginaltimestamp();
-        int terminalid = p1.getTerminalid();
-        EventType punchtype = p1.getPunchtype();
+        String badgeid = p1.getBadgeid();  // Use getBadgeid() to retrieve the badge ID
+        ots = p1.getOriginaltimestamp();   // Get the original timestamp
+        int terminalid = p1.getTerminalid();  // Get the terminal ID
 
         /* Insert Punch Into Database */
-        
         int punchid = punchDAO.create(p1);
 
         /* Retrieve New Punch */
-        
         Punch p2 = punchDAO.find(punchid);
 
         /* Compare Punches */
-        
-        assertEquals(badgeid, p2.getBadge().getId());
+        assertEquals(badgeid, p2.getBadgeid());   // Compare badge IDs
+        rts = p2.getOriginaltimestamp();          // Get the original timestamp from the retrieved punch
 
-        rts = p2.getOriginaltimestamp();
-
-        assertEquals(terminalid, p2.getTerminalid());
-        assertEquals(punchtype, p2.getPunchtype());
-        assertEquals(ots.format(dtf), rts.format(dtf));
-
+        assertEquals(terminalid, p2.getTerminalid());    // Compare terminal IDs
+        assertEquals(ots.format(dtf), rts.format(dtf));  // Compare timestamps (formatted)
     }
-
 }

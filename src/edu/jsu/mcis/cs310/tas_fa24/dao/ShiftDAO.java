@@ -34,26 +34,34 @@ public class ShiftDAO {
                     rs=ps.getResultSet();
 
                     if (rs.next()) {
-                        String description=rs.getString("description");
-                        String start=rs.getString("shiftstart");
-                        String stop=rs.getString("shiftstop");
-                        String lunchstart=rs.getString("lunchstart");
-                        String lunchstop=rs.getString("lunchstop");
+                        Map<String,Object> info=new HashMap<>();
+                        info.put("id",rs.getInt("id"));
+                        info.put("description",rs.getString("description"));
+                        info.put("start",rs.getString("shiftstart"));
+                        info.put("stop",rs.getString("shiftstop"));
+                        info.put("lunchstart",rs.getString("lunchstart"));
+                        info.put("lunchstop",rs.getString("lunchstop"));
+                        info.put("dockpenalty",rs.getObject("dockpenalty"));
+                        info.put("graceperiod",rs.getObject("graceperiod"));
+                        info.put("roundinterval",rs.getObject("roundinterval"));
+                        
                         //-------------------------------------------
-                        LocalTime lunchStartTime=LocalTime.parse(lunchstart);
-                        LocalTime lunchStopTime=LocalTime.parse(lunchstop);
+                        LocalTime lunchStartTime=LocalTime.parse(rs.getString("lunchstart"));
+                        LocalTime lunchStopTime=LocalTime.parse(rs.getString("lunchstop"));
                         int lunchDuration=(int)Duration.between(lunchStartTime, lunchStopTime).toMinutes();
+                        info.put("lunchDuration",lunchDuration);
                         //-------------------------------------------
                         
                         //-------------------------------------------
-                        LocalTime shiftStartTime=LocalTime.parse(start);
-                        LocalTime shiftStopTime=LocalTime.parse(stop);
+                        LocalTime shiftStartTime=LocalTime.parse(rs.getString("shiftstart"));
+                        LocalTime shiftStopTime=LocalTime.parse(rs.getString("shiftstop"));
                         int shiftDuration=(int)Duration.between(shiftStartTime,shiftStopTime).toMinutes();
+                        info.put("shiftDuration",shiftDuration);
                         //-------------------------------------------
                         
                         
 
-                        shift=new Shift(id,description,start,stop,lunchstart,lunchstop,lunchDuration,shiftDuration);
+                        shift=new Shift(info);
                     }
                 }
             }
