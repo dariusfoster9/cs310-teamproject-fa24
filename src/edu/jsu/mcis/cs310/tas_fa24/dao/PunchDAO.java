@@ -2,7 +2,7 @@ package edu.jsu.mcis.cs310.tas_fa24.dao;
 
 import edu.jsu.mcis.cs310.tas_fa24.Badge;
 import edu.jsu.mcis.cs310.tas_fa24.Punch;
-import edu.jsu.mcis.cs310.tas_fa24.PunchAdjustmentType;
+import edu.jsu.mcis.cs310.tas_fa24.EventType; // Import EventType enum
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +18,7 @@ public class PunchDAO {
 
     private final DAOFactory daoFactory;
 
-    PunchDAO(DAOFactory daoFactory) {
+    public PunchDAO(DAOFactory daoFactory) {
         this.daoFactory = daoFactory;
     }
 
@@ -45,25 +45,11 @@ public class PunchDAO {
                         LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
                         int eventTypeId = rs.getInt("eventtypeid");
 
-                        Punch punchFromDB = new Punch(id, terminalid, badgeid, originalTimestamp, eventTypeId);
+                        
+                        EventType eventType = EventType.values()[eventTypeId];
 
-                        // If there is an adjusted timestamp, set it (could be null)
-                        LocalDateTime adjustedTimestamp = rs.getTimestamp("timestamp") != null
-                                ? rs.getTimestamp("timestamp").toLocalDateTime()
-                                : null;
-                        punchFromDB.setAdjustedTimestamp(adjustedTimestamp);
-
-                        // Retrieve and set the adjustment type (if any)
-                        PunchAdjustmentType adjustmentType = null;
-                        String adjustmentTypeString = rs.getString("eventtypeid");
-                        if (adjustmentTypeString != null) {
-                            try {
-                                adjustmentType = PunchAdjustmentType.valueOf(adjustmentTypeString);
-                            } catch (IllegalArgumentException e) {
-                                System.err.println("Invalid adjustment type: " + adjustmentTypeString);
-                            }
-                        }
-                        punchFromDB.setAdjustmentType(adjustmentType);
+                        
+                        Punch punchFromDB = new Punch(id, terminalid, badgeid, originalTimestamp, eventType.ordinal());
 
                         punch = punchFromDB;
                     }
