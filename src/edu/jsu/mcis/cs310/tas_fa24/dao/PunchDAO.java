@@ -1,12 +1,15 @@
 package edu.jsu.mcis.cs310.tas_fa24.dao;
 
+import edu.jsu.mcis.cs310.tas_fa24.Badge;
 import edu.jsu.mcis.cs310.tas_fa24.Punch;
 import edu.jsu.mcis.cs310.tas_fa24.PunchAdjustmentType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class PunchDAO {
 
@@ -89,5 +92,73 @@ public class PunchDAO {
         }
 
         return punch;
+    }
+   
+    private static final String QUERY_LIST = "SELECT * FROM event WHERE badgeid = ? AND timestamp = ? ORDER BY timestamp";
+
+    public ArrayList<Punch> list(Badge badgeid, LocalDate timestamp){
+       
+       
+       
+            ArrayList<Punch>list = new ArrayList<Punch>();
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+        
+                 try {
+
+                Connection conn = daoFactory.getConnection();
+
+             if (conn.isValid(0)) {
+
+                ps = conn.prepareStatement(QUERY_LIST);
+                ps.setObject(1, badgeid.getId());
+                ps.setObject(2, timestamp);
+
+                boolean hasresults = ps.execute();
+
+                if (hasresults) {
+
+                    rs = ps.getResultSet();
+
+                    while (rs.next()) {
+                       
+                       
+                       
+                       
+                        Punch punchObjects = null;
+                        punchObjects.setAdjustedTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+                       
+                        list.add(punchObjects);
+                       
+                       
+                    }
+
+                }
+
+            }
+
+        } catch (SQLException e) {
+
+            throw new DAOException(e.getMessage());
+
+        } finally {
+
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+
+        }
+        return list;
     }
 }
