@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.sql.Timestamp; 
 import java.time.LocalDateTime;
 
+
 public class PunchDAO {
 
     private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";
@@ -151,5 +152,4 @@ public class PunchDAO {
     // Return the generated punch ID or -1 if the insert failed
     return punchId;
 }
-
 }
