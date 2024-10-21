@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.sql.Statement; 
+import java.sql.Timestamp; 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -161,4 +163,18 @@ public class PunchDAO {
         }
         return list;
     }
+    public ArrayList<Punch> list(Badge badge, LocalDate begin, LocalDate end) {
+    ArrayList<Punch> punchList = new ArrayList<>();
+    
+    // Iterate through the range of dates from 'begin' to 'end' inclusive
+    for (LocalDate date = begin; !date.isAfter(end); date = date.plusDays(1)) {
+        // Use the existing single-day 'list()' method to get punches for each day
+        ArrayList<Punch> dailyPunches = list(badge, date);
+        // Add all punches from the current day to the accumulated punch list
+        punchList.addAll(dailyPunches);
+    }
+
+    // Return the accumulated list of punches
+    return punchList;
+}
 }
