@@ -91,25 +91,31 @@ public class PunchDAO {
             Connection conn = daoFactory.getConnection();
 
             if (conn.isValid(0)) {
-
+                
                 ps = conn.prepareStatement(QUERY_LIST);
                 ps.setObject(1, badgeid.getId());
                 ps.setObject(2, timestamp);
+                //rs= ps.executeQuery();
 
                 boolean hasresults = ps.execute();
 
                 if (hasresults) {
-
+                    
                     rs = ps.getResultSet();
 
                     while (rs.next()) {
                         
                         
-                        Punch punchObjects = null;
-                        punchObjects.setAdjustedTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+                       
+                        int id = rs.getInt("id");
+                        int terminalid = rs.getInt("terminalid");
+                        int eventTypeId = rs.getInt("eventtypeid");
+                        EventType eventType = EventType.values()[eventTypeId];
                         
-                        list.add(punchObjects);
-                     
+                        Punch listForaDay = new Punch(id, terminalid, badgeid.getId(), timestamp, eventType.ordinal());
+                        
+                        list.add(listForaDay);
+                        
                     }
 
                 }
@@ -135,10 +141,10 @@ public class PunchDAO {
                 } catch (SQLException e) {
                     throw new DAOException(e.getMessage());
                 }
-            }
+            } 
 
-        }
-        return list;
+        }  return list;
+       
     }
 
 

@@ -1,5 +1,6 @@
 package edu.jsu.mcis.cs310.tas_fa24;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -14,6 +15,7 @@ public class Punch {
     private PunchAdjustmentType adjustmentType; 
     private int eventTypeId; 
     private EventType eventType;  // Add EventType as a field
+    private LocalDate timestamp;
 
     // Constructor for a new punch (without ID)
     public Punch(int terminalid, String badgeid, int eventTypeId) {
@@ -37,6 +39,17 @@ public class Punch {
         this.adjustmentType = null;
         this.eventTypeId = eventTypeId;
         this.eventType = getEventTypeFromId(eventTypeId); // Map eventTypeId to EventType
+    }
+
+    public Punch(int id, int terminalid, String badgeid, LocalDate timestamp, int eventTypeId) {
+        this.id = id;
+        this.terminalid = terminalid;
+        this.badgeid = badgeid;
+        this.timestamp = timestamp;
+        this.adjustedtimestamp = null;
+        this.adjustmentType = null;
+        this.eventTypeId = eventTypeId;
+        this.eventType = getEventTypeFromId(eventTypeId);
     }
 
     
