@@ -163,18 +163,19 @@ public class PunchDAO {
         }
         return list;
     }
+    // New method to list punches over a date range
     public ArrayList<Punch> list(Badge badge, LocalDate begin, LocalDate end) {
-    ArrayList<Punch> punchList = new ArrayList<>();
-    
-    // Iterate through the range of dates from 'begin' to 'end' inclusive
-    for (LocalDate date = begin; !date.isAfter(end); date = date.plusDays(1)) {
-        // Use the existing single-day 'list()' method to get punches for each day
-        ArrayList<Punch> dailyPunches = list(badge, date);
-        // Add all punches from the current day to the accumulated punch list
-        punchList.addAll(dailyPunches);
-    }
+        ArrayList<Punch> punchList = new ArrayList<>();
 
-    // Return the accumulated list of punches
-    return punchList;
-}
+        // Iterate through the range of dates from 'begin' to 'end' inclusive
+        for (LocalDate date = begin; !date.isAfter(end); date = date.plusDays(1)) {
+            // Use the existing single-day 'list()' method to get punches for each day
+            ArrayList<Punch> dailyPunches = list(badge, date);
+            // Add all punches from the current day to the accumulated punch list
+            punchList.addAll(dailyPunches);
+        }
+
+        // Return the accumulated list of punches
+        return punchList;
+    }
 }
