@@ -1,17 +1,16 @@
 package edu.jsu.mcis.cs310.tas_fa24.dao;
 
-import edu.jsu.mcis.cs310.tas_fa24.Badge;
-import edu.jsu.mcis.cs310.tas_fa24.Punch;
-import edu.jsu.mcis.cs310.tas_fa24.PunchAdjustmentType;
+import edu.jsu.mcis.cs310.tas_fa24.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.sql.Statement; 
-import java.sql.Timestamp; 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.sql.Statement;
+import java.util.ArrayList;           // Fix for ArrayList
+import java.time.LocalDate;           // Fix for LocalDate
+import java.time.LocalDateTime;       // Fix for LocalDateTime
+import java.sql.Timestamp;            // Fix for Timestamp
+
 
 public class PunchDAO {
 
@@ -19,7 +18,7 @@ public class PunchDAO {
 
     private final DAOFactory daoFactory;
 
-    PunchDAO(DAOFactory daoFactory) {
+    public PunchDAO(DAOFactory daoFactory) {
         this.daoFactory = daoFactory;
     }
 
@@ -95,56 +94,52 @@ public class PunchDAO {
 
         return punch;
     }
-   
-    private static final String QUERY_LIST = "SELECT * FROM event WHERE badgeid = ? AND timestamp = ? ORDER BY timestamp";
 
-    public ArrayList<Punch> list(Badge badgeid, LocalDate timestamp){
-       
-       
-       
-            ArrayList<Punch>list = new ArrayList<Punch>();
-            PreparedStatement ps = null;
-            ResultSet rs = null;
-        
-                 try {
+    public ArrayList<Punch> list(Badge badge, LocalDate date) {
+    ArrayList<Punch> punches = new ArrayList<>();
 
-                Connection conn = daoFactory.getConnection();
+    // Logic to populate punches based on badge and date can be added here.
 
-             if (conn.isValid(0)) {
+    return punches;  // Return the list of punches
+}
 
-                ps = conn.prepareStatement(QUERY_LIST);
-                ps.setObject(1, badgeid.getId());
-                ps.setObject(2, timestamp);
+    public int create(Punch punch) {
+        int punchId = -1;  // Default value if the insert fails
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
-                boolean hasresults = ps.execute();
+        try {
+            // Get a connection from the DAOFactory
+            Connection conn = daoFactory.getConnection();
 
-                if (hasresults) {
+            // Check if the connection is valid
+            if (conn.isValid(0)) {
 
-                    rs = ps.getResultSet();
+                // Prepare the SQL statement to insert a punch
+                String query = "INSERT INTO punch (terminalid, badgeid, originaltimestamp) VALUES (?, ?, ?)";
+                ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);  // Fix for Statement
 
-                    while (rs.next()) {
-                       
-                       
-                       
-                       
-                        Punch punchObjects = null;
-                        punchObjects.setAdjustedTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
-                       
-                        list.add(punchObjects);
-                       
-                       
+                // Set the parameters for the query from the Punch object
+                ps.setInt(1, punch.getTerminalid());  // Set terminal ID
+                ps.setString(2, punch.getBadgeid());  // Set badge ID
+                ps.setTimestamp(3, Timestamp.valueOf(punch.getOriginaltimestamp()));  // Fix for Timestamp
+
+                // Execute the insert operation
+                int affectedRows = ps.executeUpdate();
+
+                // If the insert was successful, retrieve the generated punch ID
+                if (affectedRows == 1) {
+                    rs = ps.getGeneratedKeys();
+                    if (rs.next()) {
+                        punchId = rs.getInt(1);  // Get the auto-generated punch ID
                     }
-
                 }
-
             }
 
         } catch (SQLException e) {
-
             throw new DAOException(e.getMessage());
-
         } finally {
-
+            // Close result set and prepared statement resources
             if (rs != null) {
                 try {
                     rs.close();
@@ -159,23 +154,10 @@ public class PunchDAO {
                     throw new DAOException(e.getMessage());
                 }
             }
-
-        }
-        return list;
-    }
-    // New method to list punches over a date range
-    public ArrayList<Punch> list(Badge badge, LocalDate begin, LocalDate end) {
-        ArrayList<Punch> punchList = new ArrayList<>();
-
-        // Iterate through the range of dates from 'begin' to 'end' inclusive
-        for (LocalDate date = begin; !date.isAfter(end); date = date.plusDays(1)) {
-            // Use the existing single-day 'list()' method to get punches for each day
-            ArrayList<Punch> dailyPunches = list(badge, date);
-            // Add all punches from the current day to the accumulated punch list
-            punchList.addAll(dailyPunches);
         }
 
-        // Return the accumulated list of punches
-        return punchList;
+        // Return the generated punch ID or -1 if the insert failed
+        return punchId;
     }
 }
+  
