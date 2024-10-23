@@ -141,50 +141,57 @@ public class PunchDAO {
     }
 
     public int create(Punch punch) {
-        int punchId = -1;  // Default value if the insert fails
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+    int punchId = -1;  // Default value if the insert fails
+    PreparedStatement ps = null;
+    ResultSet rs = null;
 
-        try {
-            Connection conn = daoFactory.getConnection();
+    try {
+        // Get a connection from the DAOFactory
+        Connection conn = daoFactory.getConnection();
 
-            if (conn.isValid(0)) {
-                String query = "INSERT INTO punch (terminalid, badgeid, originaltimestamp) VALUES (?, ?, ?)";
-                ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+        // Check if the connection is valid
+        if (conn.isValid(0)) {
+            // Update the table to event
+            String query = "INSERT INTO event (terminalid, badgeid, originaltimestamp) VALUES (?, ?, ?)";
+            ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
-                ps.setInt(1, punch.getTerminalid());  // Set terminal ID
-                ps.setString(2, punch.getBadgeid());  // Set badge ID
-                ps.setTimestamp(3, Timestamp.valueOf(punch.getOriginaltimestamp()));  // Set original timestamp
+            // Set the parameters for the query from the Punch object
+            ps.setInt(1, punch.getTerminalid());  // Set terminal ID
+            ps.setString(2, punch.getBadgeid());  // Set badge ID
+            ps.setTimestamp(3, Timestamp.valueOf(punch.getOriginaltimestamp()));  // Set original timestamp
 
-                int affectedRows = ps.executeUpdate();
+            int affectedRows = ps.executeUpdate();
 
-                if (affectedRows == 1) {
-                    rs = ps.getGeneratedKeys();
-                    if (rs.next()) {
-                        punchId = rs.getInt(1);  // Get the auto-generated punch ID
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            throw new DAOException(e.getMessage());
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    throw new DAOException(e.getMessage());
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    throw new DAOException(e.getMessage());
+            // If the insert was successful, retrieve the generated event ID
+            if (affectedRows == 1) {
+                rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    punchId = rs.getInt(1);  // Get the auto-generated event ID
                 }
             }
         }
 
-        return punchId;
+    } catch (SQLException e) {
+        throw new DAOException(e.getMessage());
+    } finally {
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                throw new DAOException(e.getMessage());
+            }
+        }
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                throw new DAOException(e.getMessage());
+            }
+        }
     }
+
+    return punchId;
+}
+
 }
 
