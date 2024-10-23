@@ -59,7 +59,7 @@ public class DepartmentFindTest {
         assertEquals("#8 (Shipping), Terminal ID: 107", d3.toString());
 
     }
-    
+    @Test
     public void testFindDepartment4() {
 
         DepartmentDAO departmentDAO = daoFactory.getDepartmentDAO();
@@ -73,7 +73,7 @@ public class DepartmentFindTest {
         assertEquals("#5 (Hafting), Terminal ID: 105", d4.toString());
 
     }
-    
+    @Test
     public void testFindDepartment5() {
 
         DepartmentDAO departmentDAO = daoFactory.getDepartmentDAO();
