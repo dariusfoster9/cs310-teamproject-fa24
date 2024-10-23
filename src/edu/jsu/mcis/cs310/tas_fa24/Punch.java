@@ -10,7 +10,7 @@ public class Punch {
     private final int id; 
     private final int terminalid; 
     private final String badgeid; 
-    private final LocalDateTime originaltimestamp; 
+    private LocalDateTime originaltimestamp; 
     private LocalDateTime adjustedtimestamp; 
     private PunchAdjustmentType adjustmentType; 
     private int eventTypeId; 
@@ -40,18 +40,6 @@ public class Punch {
         this.eventTypeId = eventTypeId;
         this.eventType = getEventTypeFromId(eventTypeId); // Map eventTypeId to EventType
     }
-
-    public Punch(int id, int terminalid, String badgeid, LocalDate timestamp, int eventTypeId) {
-        this.id = id;
-        this.terminalid = terminalid;
-        this.badgeid = badgeid;
-        this.timestamp = timestamp;
-        this.adjustedtimestamp = null;
-        this.adjustmentType = null;
-        this.eventTypeId = eventTypeId;
-        this.eventType = getEventTypeFromId(eventTypeId);
-    }
-
     
     private EventType getEventTypeFromId(int eventTypeId) {
         if (eventTypeId >= 0 && eventTypeId < EventType.values().length) {

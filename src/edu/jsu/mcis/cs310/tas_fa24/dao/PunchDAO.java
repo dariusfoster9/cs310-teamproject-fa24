@@ -8,13 +8,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.sql.Statement; 
+import java.sql.Timestamp; 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class PunchDAO {
 
     private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";
-    private static final String QUERY_LIST = "SELECT * FROM event WHERE badgeid = ? AND timestamp = ? ORDER BY timestamp";
+    //private static final String QUERY_LIST = "SELECT * FROM event WHERE badgeid = ? AND timestamp = ? ORDER BY timestamp";
+    private static final String QUERY_LIST = "SELECT *, DATE(`timestamp`) AS tsdate FROM `event` WHERE badgeid = ? HAVING tsdate = ? ORDER BY `timestamp`;";
 
     private final DAOFactory daoFactory;
 
@@ -80,9 +84,9 @@ public class PunchDAO {
 
         return punch;
     }
-    public ArrayList<Punch> list(Badge badgeid, LocalDate timestamp){
+    public ArrayList<Punch> list(Badge badgeid, LocalDate date){
         
-        ArrayList<Punch>list = new ArrayList<Punch>();
+        ArrayList<Punch> list = new ArrayList<Punch>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         
@@ -93,8 +97,8 @@ public class PunchDAO {
             if (conn.isValid(0)) {
                 
                 ps = conn.prepareStatement(QUERY_LIST);
-                ps.setObject(1, badgeid.getId());
-                ps.setObject(2, timestamp);
+                ps.setString(1, badgeid.getId());
+                ps.setDate(2, java.sql.Date.valueOf(date));
                 //rs= ps.executeQuery();
 
                 boolean hasresults = ps.execute();
@@ -105,11 +109,10 @@ public class PunchDAO {
 
                     while (rs.next()) {
                         
-                        
-                       
                         int id = rs.getInt("id");
                         int terminalid = rs.getInt("terminalid");
                         int eventTypeId = rs.getInt("eventtypeid");
+                        LocalDateTime timestamp = rs.getTimestamp("timestamp").toLocalDateTime();
                         EventType eventType = EventType.values()[eventTypeId];
                         
                         Punch listForaDay = new Punch(id, terminalid, badgeid.getId(), timestamp, eventType.ordinal());
@@ -147,5 +150,19 @@ public class PunchDAO {
        
     }
 
+    public ArrayList<Punch> list(Badge badge, LocalDate begin, LocalDate end) {
+    ArrayList<Punch> punchList = new ArrayList<>();
+    
+    // Iterate through the range of dates from 'begin' to 'end' inclusive
+    for (LocalDate date = begin; !date.isAfter(end); date = date.plusDays(1)) {
+        // Use the existing single-day 'list()' method to get punches for each day
+        ArrayList<Punch> dailyPunches = list(badge, date);
+        // Add all punches from the current day to the accumulated punch list
+        punchList.addAll(dailyPunches);
+    }
+
+    // Return the accumulated list of punches
+    return punchList;
+}
 
 }
