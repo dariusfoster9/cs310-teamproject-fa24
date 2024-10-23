@@ -92,6 +92,7 @@ public class PunchDAO {
         
         try {
 
+            Connection conn = daoFactory.getConnection();
     // Logic to populate punches based on badge and date can be added here.
 
             if (conn.isValid(0)) {
