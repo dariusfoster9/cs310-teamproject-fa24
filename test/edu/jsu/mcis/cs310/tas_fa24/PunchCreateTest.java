@@ -33,9 +33,9 @@ public class PunchCreateTest {
 
         /* Get Punch Properties */
         String badgeid = p1.getBadgeid();  // Use getBadgeid() to retrieve the badge ID
-        ots = p1.getOriginaltimestamp();   // Get the original timestamp
-        int terminalid = p1.getTerminalid();  // Get the terminal ID
-        int eventTypeId = p1.getEventTypeId();  // Get the event type ID
+        ots = p1.gettimestamp();   // Get the original timestamp
+        int terminalid = p1.getterminalid();  // Get the terminal ID
+        int eventTypeId = p1.geteventtypeId();  // Get the event type ID
 
         /* Insert Punch Into Database */
         int punchid = punchDAO.create(p1);
