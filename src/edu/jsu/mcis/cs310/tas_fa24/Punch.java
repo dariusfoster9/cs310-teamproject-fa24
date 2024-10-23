@@ -1,5 +1,6 @@
 package edu.jsu.mcis.cs310.tas_fa24;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -9,10 +10,12 @@ public class Punch {
     private final int id; 
     private final int terminalid; 
     private final String badgeid; 
-    private final LocalDateTime originaltimestamp; 
+    private LocalDateTime originaltimestamp; 
     private LocalDateTime adjustedtimestamp; 
     private PunchAdjustmentType adjustmentType; 
     private int eventTypeId; 
+    private EventType eventType;  // Add EventType as a field
+    private LocalDate timestamp;
 
     // Constructor for a new punch (without ID)
     public Punch(int terminalid, String badgeid, int eventTypeId) {
@@ -23,6 +26,7 @@ public class Punch {
         this.adjustedtimestamp = null;
         this.adjustmentType = null;
         this.eventTypeId = eventTypeId;
+        this.eventType = getEventTypeFromId(eventTypeId); // Map eventTypeId to EventType
     }
 
     // Constructor for an existing punch (with ID)
@@ -34,6 +38,14 @@ public class Punch {
         this.adjustedtimestamp = null;
         this.adjustmentType = null;
         this.eventTypeId = eventTypeId;
+        this.eventType = getEventTypeFromId(eventTypeId); // Map eventTypeId to EventType
+    }
+    
+    private EventType getEventTypeFromId(int eventTypeId) {
+        if (eventTypeId >= 0 && eventTypeId < EventType.values().length) {
+            return EventType.values()[eventTypeId];
+        }
+        throw new IllegalArgumentException("Invalid event type ID: " + eventTypeId);
     }
 
     // Getters
@@ -61,6 +73,10 @@ public class Punch {
         return eventTypeId;
     }
 
+    public EventType getEventType() {
+        return eventType;
+    }
+
     // Setters
     public void setAdjustedTimestamp(LocalDateTime adjustedtimestamp) {
         this.adjustedtimestamp = adjustedtimestamp;
@@ -70,24 +86,13 @@ public class Punch {
         this.adjustmentType = adjustmentType;
     }
 
-    // Print method that handles different event types
+    
     public String printOriginal() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
         String timestamp = originaltimestamp.format(formatter);
 
-        String punchType;
-        switch (eventTypeId) {
-            case 1:
-                punchType = "CLOCK IN";
-                break;
-            case 2:
-                punchType = "TIME OUT";
-                break;
-            default:
-                punchType = "CLOCK OUT";
-                break;
-            
-        }
+        
+        String punchType = eventType.toString().replace("_", " ");
 
         return String.format("#%s %s: %S", badgeid, punchType, timestamp);
     }
