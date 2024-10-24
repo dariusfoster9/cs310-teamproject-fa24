@@ -26,15 +26,16 @@ public class PunchCreateTest {
 
         /* Create New Punch Object */
         Badge badge = badgeDAO.find("021890C0");  // Retrieve Badge object
-        Punch p1 = new Punch(103, badge.getId());  // Create Punch with terminal ID and badge ID
+        Punch p1 = new Punch(103, badge.getId(), 1);  // Create Punch with terminal ID, badge ID, and event type ID
 
         /* Create Timestamp Objects */
         LocalDateTime ots, rts;
 
         /* Get Punch Properties */
         String badgeid = p1.getBadgeid();  // Use getBadgeid() to retrieve the badge ID
-        ots = p1.getOriginaltimestamp();   // Get the original timestamp
-        int terminalid = p1.getTerminalid();  // Get the terminal ID
+        ots = p1.gettimestamp();   // Get the original timestamp
+        int terminalid = p1.getterminalid();  // Get the terminal ID
+        int eventTypeId = p1.geteventtypeId();  // Get the event type ID
 
         /* Insert Punch Into Database */
         int punchid = punchDAO.create(p1);
@@ -45,8 +46,8 @@ public class PunchCreateTest {
         /* Compare Punches */
         assertEquals(badgeid, p2.getBadgeid());   // Compare badge IDs
         rts = p2.getOriginaltimestamp();          // Get the original timestamp from the retrieved punch
-
         assertEquals(terminalid, p2.getTerminalid());    // Compare terminal IDs
+        assertEquals(eventTypeId, p2.getEventTypeId());  // Compare event type IDs
         assertEquals(ots.format(dtf), rts.format(dtf));  // Compare timestamps (formatted)
     }
 }
