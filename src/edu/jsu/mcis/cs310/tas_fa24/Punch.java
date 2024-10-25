@@ -9,7 +9,7 @@ public class Punch {
     private final int id; 
     private final int terminalid; 
     private final String badgeid; 
-    private LocalDateTime originaltimestamp; 
+    private LocalDateTime timestamp; 
     private LocalDateTime adjustedtimestamp; 
     private PunchAdjustmentType adjustmentType; 
     private int eventTypeId; 
@@ -20,7 +20,7 @@ public class Punch {
         this.id = -1;
         this.terminalid = terminalid;
         this.badgeid = badgeid;
-        this.originaltimestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now();
         this.adjustedtimestamp = null;
         this.adjustmentType = null;
         this.eventTypeId = eventTypeId;
@@ -28,11 +28,11 @@ public class Punch {
     }
 
     
-    public Punch(int id, int terminalid, String badgeid, LocalDateTime originaltimestamp, int eventTypeId) {
+    public Punch(int id, int terminalid, String badgeid, LocalDateTime timestamp, int eventTypeId) {
         this.id = id;
         this.terminalid = terminalid;
         this.badgeid = badgeid;
-        this.originaltimestamp = originaltimestamp;
+        this.timestamp = timestamp;
         this.adjustedtimestamp = null;
         this.adjustmentType = null;
         this.eventTypeId = eventTypeId;
@@ -61,7 +61,7 @@ public class Punch {
 
     
     public LocalDateTime getTimestamp() {
-        return this.originaltimestamp;
+        return this.timestamp;
     }
 
     public LocalDateTime getAdjustedtimestamp() {
@@ -88,7 +88,7 @@ public class Punch {
     
     public String printOriginal() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
-        String formattedTimestamp = originaltimestamp.format(formatter);
+        String formattedTimestamp = timestamp.format(formatter);
         String punchType = eventType.toString().replace("_", " ");
 
         return String.format("#%s %s: %S", badgeid, punchType, formattedTimestamp);
@@ -97,7 +97,7 @@ public class Punch {
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
-        String originaltime = originaltimestamp.format(formatter);
+        String originaltime = timestamp.format(formatter);
         String result = String.format("#%s: Terminal %d, Original Timestamp: %s", 
                                        badgeid, 
                                        terminalid, 
