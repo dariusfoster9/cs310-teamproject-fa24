@@ -56,6 +56,18 @@ public class Shift{
         return shiftDuration;
     }
     
+    public int getroundInterval(){
+        return roundinterval;
+    }
+    
+    public int getgracePeriod(){
+        return graceperiod;
+    }
+    
+    public int getdockPenalty(){
+        return dockpenalty;
+    }
+    
     @Override
     public String toString() {
         return String.format("%s: %s - %s (%d minutes); Lunch: %s - %s (%d minutes)",
