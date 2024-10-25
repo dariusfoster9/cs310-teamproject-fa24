@@ -1,12 +1,11 @@
 package edu.jsu.mcis.cs310.tas_fa24;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Punch {
 
-    // Attributes
+    
     private final int id; 
     private final int terminalid; 
     private final String badgeid; 
@@ -14,10 +13,9 @@ public class Punch {
     private LocalDateTime adjustedtimestamp; 
     private PunchAdjustmentType adjustmentType; 
     private int eventTypeId; 
-    private EventType eventType;  // Add EventType as a field
-    private LocalDate timestamp;
+    private EventType eventType;
 
-    // Constructor for a new punch (without ID)
+    
     public Punch(int terminalid, String badgeid, int eventTypeId) {
         this.id = -1;
         this.terminalid = terminalid;
@@ -26,10 +24,10 @@ public class Punch {
         this.adjustedtimestamp = null;
         this.adjustmentType = null;
         this.eventTypeId = eventTypeId;
-        this.eventType = getEventTypeFromId(eventTypeId); // Map eventTypeId to EventType
+        this.eventType = getEventTypeFromId(eventTypeId); 
     }
 
-    // Constructor for an existing punch (with ID)
+    
     public Punch(int id, int terminalid, String badgeid, LocalDateTime originaltimestamp, int eventTypeId) {
         this.id = id;
         this.terminalid = terminalid;
@@ -38,7 +36,7 @@ public class Punch {
         this.adjustedtimestamp = null;
         this.adjustmentType = null;
         this.eventTypeId = eventTypeId;
-        this.eventType = getEventTypeFromId(eventTypeId); // Map eventTypeId to EventType
+        this.eventType = getEventTypeFromId(eventTypeId); 
     }
     
     private EventType getEventTypeFromId(int eventTypeId) {
@@ -48,7 +46,7 @@ public class Punch {
         throw new IllegalArgumentException("Invalid event type ID: " + eventTypeId);
     }
 
-    // Getters
+    
     public int getId() {
         return id;
     }
@@ -61,8 +59,9 @@ public class Punch {
         return badgeid;
     }
 
-    public LocalDateTime getOriginaltimestamp() {
-        return originaltimestamp;
+    
+    public LocalDateTime getTimestamp() {
+        return this.originaltimestamp;
     }
 
     public LocalDateTime getAdjustedtimestamp() {
@@ -77,7 +76,7 @@ public class Punch {
         return eventType;
     }
 
-    // Setters
+    
     public void setAdjustedTimestamp(LocalDateTime adjustedtimestamp) {
         this.adjustedtimestamp = adjustedtimestamp;
     }
@@ -89,12 +88,10 @@ public class Punch {
     
     public String printOriginal() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
-        String timestamp = originaltimestamp.format(formatter);
-
-        
+        String formattedTimestamp = originaltimestamp.format(formatter);
         String punchType = eventType.toString().replace("_", " ");
 
-        return String.format("#%s %s: %S", badgeid, punchType, timestamp);
+        return String.format("#%s %s: %S", badgeid, punchType, formattedTimestamp);
     }
 
     @Override
@@ -113,3 +110,4 @@ public class Punch {
         return result;
     }
 }
+
