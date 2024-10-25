@@ -1,7 +1,10 @@
 package edu.jsu.mcis.cs310.tas_fa24;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class Punch {
 
@@ -67,6 +70,10 @@ public class Punch {
     public LocalDateTime getAdjustedtimestamp() {
         return adjustedtimestamp;
     }
+    
+    public PunchAdjustmentType getadjustmentType(){
+        return adjustmentType;
+    }
 
     public int getEventTypeId() {
         return eventTypeId;
@@ -76,7 +83,6 @@ public class Punch {
         return eventType;
     }
 
-    // Setters
     public void setAdjustedTimestamp(LocalDateTime adjustedtimestamp) {
         this.adjustedtimestamp = adjustedtimestamp;
     }
@@ -84,7 +90,7 @@ public class Punch {
     public void setAdjustmentType(PunchAdjustmentType adjustmentType) {
         this.adjustmentType = adjustmentType;
     }
-
+    
     
     public String printOriginal() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
@@ -94,6 +100,17 @@ public class Punch {
         String punchType = eventType.toString().replace("_", " ");
 
         return String.format("#%s %s: %S", badgeid, punchType, timestamp);
+    }
+    
+    public String printAdjusted(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
+        if (adjustedtimestamp!=null){
+            String adjustedTime=adjustedtimestamp.format(formatter).toUpperCase();
+            String punchType=eventType.toString().replace("_"," ");
+            return String.format("#%s %s: %s (%s)",badgeid,punchType,adjustedTime,adjustmentType);
+        }else{
+            return("No Adjustments made");
+        }
     }
 
     @Override
@@ -111,4 +128,75 @@ public class Punch {
         }
         return result;
     }
+    public void adjust(Shift s){
+        LocalTime punchTime=originaltimestamp.toLocalTime();
+        LocalTime start=s.getStart();
+        LocalTime stop=s.getStop();
+        LocalTime lunchstart=s.getlunchStart();
+        LocalTime lunchstop=s.getlunchStop();
+        int roundinterval=s.getroundInterval();
+        int graceperiod=s.getgracePeriod();
+        int dockpenalty=s.getdockPenalty();
+                
+    DayOfWeek day = originaltimestamp.getDayOfWeek();
+
+    if(day==DayOfWeek.SATURDAY||day==DayOfWeek.SUNDAY){
+        adjustedtimestamp=roundToNearestInterval(originaltimestamp,roundinterval);
+        adjustmentType=PunchAdjustmentType.INTERVAL_ROUND;
+        return;
+    }        
+        
+        
+        
+        if(eventType==EventType.CLOCK_IN){
+            if(punchTime.isBefore(start)){
+                adjustedtimestamp=originaltimestamp.with(start);
+                adjustmentType=PunchAdjustmentType.SHIFT_START;
+                
+            }else if(punchTime.isBefore(start.plusMinutes(graceperiod))){
+                adjustedtimestamp=originaltimestamp.with(start);
+                adjustmentType=PunchAdjustmentType.SHIFT_START;
+                
+            }else if (punchTime.isBefore(start.plusMinutes(dockpenalty))) {
+                adjustedtimestamp=originaltimestamp.with(start.plusMinutes(dockpenalty));
+                adjustmentType=PunchAdjustmentType.SHIFT_DOCK;      
+                
+            }else{
+                adjustedtimestamp=roundToNearestInterval(originaltimestamp,roundinterval);                
+                adjustmentType=PunchAdjustmentType.NONE;                              
+            }
+            
+        }else if(eventType==EventType.CLOCK_OUT){
+            if (punchTime.isAfter(stop)&&punchTime.isBefore(stop.plusMinutes(roundinterval))){
+                adjustedtimestamp=originaltimestamp.with(stop);
+                adjustmentType=PunchAdjustmentType.SHIFT_STOP;
+                
+        }else if(punchTime.isAfter(stop.minusMinutes(dockpenalty))&&punchTime.isBefore(stop)){
+                adjustedtimestamp=originaltimestamp.with(stop.minusMinutes(dockpenalty));
+                adjustmentType=PunchAdjustmentType.SHIFT_DOCK;
+
+            }else{
+                adjustedtimestamp=roundToNearestInterval(originaltimestamp,roundinterval);
+                adjustmentType=PunchAdjustmentType.NONE;
+            }
+        }
+        if(punchTime.isAfter(lunchstart)&&punchTime.isBefore(lunchstop)){
+            if (eventType==EventType.CLOCK_IN){
+                adjustedtimestamp=originaltimestamp.with(lunchstop);
+                adjustmentType=PunchAdjustmentType.LUNCH_STOP;
+            }else if(eventType==EventType.CLOCK_OUT){
+                adjustedtimestamp=originaltimestamp.with(lunchstart);
+                adjustmentType=PunchAdjustmentType.LUNCH_START;
+            }
+        }
+    }
+    private LocalDateTime roundToNearestInterval(LocalDateTime time, int intervalMinutes) {
+        long minutes=time.getMinute();
+        long quotient=minutes/intervalMinutes;
+        long remainder=minutes%intervalMinutes;
+        long roundedMinutes=(remainder<intervalMinutes/2)?
+                quotient*intervalMinutes:(quotient+1)*intervalMinutes;
+        return time.truncatedTo(ChronoUnit.HOURS).plusMinutes(roundedMinutes);
+    }
+
 }
