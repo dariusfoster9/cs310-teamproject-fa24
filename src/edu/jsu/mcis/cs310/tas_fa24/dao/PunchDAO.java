@@ -2,7 +2,7 @@ package edu.jsu.mcis.cs310.tas_fa24.dao;
 
 import edu.jsu.mcis.cs310.tas_fa24.Badge;
 import edu.jsu.mcis.cs310.tas_fa24.Punch;
-import edu.jsu.mcis.cs310.tas_fa24.EventType; // Import EventType enum
+import edu.jsu.mcis.cs310.tas_fa24.EventType; 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -125,15 +125,15 @@ public class PunchDAO {
         return list;
     }
 
-    // New method to list punches over a date range
+    
     public ArrayList<Punch> list(Badge badge, LocalDate begin, LocalDate end) {
         ArrayList<Punch> punchList = new ArrayList<>();
 
-        // Iterate through the range of dates from 'begin' to 'end' inclusive
+        
         for (LocalDate date = begin; !date.isAfter(end); date = date.plusDays(1)) {
-            // Use the existing single-day 'list()' method to get punches for each day
+            
             ArrayList<Punch> dailyPunches = list(badge, date);
-            // Add all punches from the current day to the accumulated punch list
+            
             punchList.addAll(dailyPunches);
         }
 
@@ -141,32 +141,34 @@ public class PunchDAO {
     }
 
     public int create(Punch punch) {
-    int punchId = -1;  // Default value if the insert fails
+    int punchId = -1;  
     PreparedStatement ps = null;
     ResultSet rs = null;
 
     try {
-        // Get a connection from the DAOFactory
+        
         Connection conn = daoFactory.getConnection();
 
-        // Check if the connection is valid
+        
         if (conn.isValid(0)) {
-            // Update the table to event
-            String query = "INSERT INTO event (terminalid, badgeid, originaltimestamp) VALUES (?, ?, ?)";
+            
+            String query = "INSERT INTO event (terminalid, badgeid, timestamp) VALUES (?, ?, ?)";
             ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
-            // Set the parameters for the query from the Punch object
-            ps.setInt(1, punch.getTerminalid());  // Set terminal ID
-            ps.setString(2, punch.getBadgeid());  // Set badge ID
-            ps.setTimestamp(3, Timestamp.valueOf(punch.getOriginaltimestamp()));  // Set original timestamp
+            
+            ps.setInt(1, punch.getTerminalid());  
+            ps.setString(2, punch.getBadgeid());  
+            ps.setTimestamp(3, Timestamp.valueOf(punch.getTimestamp()));
+
+
 
             int affectedRows = ps.executeUpdate();
 
-            // If the insert was successful, retrieve the generated event ID
+            
             if (affectedRows == 1) {
                 rs = ps.getGeneratedKeys();
                 if (rs.next()) {
-                    punchId = rs.getInt(1);  // Get the auto-generated event ID
+                    punchId = rs.getInt(1);  
                 }
             }
         }
