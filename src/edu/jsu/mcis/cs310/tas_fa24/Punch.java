@@ -12,7 +12,6 @@ public class Punch {
     private LocalDateTime timestamp; 
     private LocalDateTime adjustedtimestamp; 
     private PunchAdjustmentType adjustmentType; 
-    private int eventTypeId; 
     private EventType eventType;
 
     
@@ -23,7 +22,6 @@ public class Punch {
         this.timestamp = LocalDateTime.now();
         this.adjustedtimestamp = null;
         this.adjustmentType = null;
-        this.eventTypeId = eventTypeId;
         this.eventType = getEventTypeFromId(eventTypeId); 
     }
 
@@ -35,7 +33,6 @@ public class Punch {
         this.timestamp = timestamp;
         this.adjustedtimestamp = null;
         this.adjustmentType = null;
-        this.eventTypeId = eventTypeId;
         this.eventType = getEventTypeFromId(eventTypeId); 
     }
     
@@ -66,10 +63,6 @@ public class Punch {
 
     public LocalDateTime getAdjustedtimestamp() {
         return adjustedtimestamp;
-    }
-
-    public int getEventTypeId() {
-        return eventTypeId;
     }
 
     public EventType getEventType() {
