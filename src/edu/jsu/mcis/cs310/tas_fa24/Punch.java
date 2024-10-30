@@ -12,34 +12,32 @@ public class Punch {
     private final int id; 
     private final int terminalid; 
     private final String badgeid; 
-    private final LocalDateTime originaltimestamp; 
+    private LocalDateTime timestamp; 
     private LocalDateTime adjustedtimestamp; 
     private PunchAdjustmentType adjustmentType; 
-    private int eventTypeId; 
-    private EventType eventType;  // Add EventType as a field
+    private EventType eventType;
 
     // Constructor for a new punch (without ID)
     public Punch(int terminalid, String badgeid, int eventTypeId) {
         this.id = -1;
         this.terminalid = terminalid;
         this.badgeid = badgeid;
-        this.originaltimestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now();
         this.adjustedtimestamp = null;
         this.adjustmentType = null;
-        this.eventTypeId = eventTypeId;
-        this.eventType = getEventTypeFromId(eventTypeId); // Map eventTypeId to EventType
+
+        this.eventType = getEventTypeFromId(eventTypeId); 
     }
 
-    // Constructor for an existing punch (with ID)
-    public Punch(int id, int terminalid, String badgeid, LocalDateTime originaltimestamp, int eventTypeId) {
+    
+    public Punch(int id, int terminalid, String badgeid, LocalDateTime timestamp, int eventTypeId) {
         this.id = id;
         this.terminalid = terminalid;
         this.badgeid = badgeid;
-        this.originaltimestamp = originaltimestamp;
+        this.timestamp = timestamp;
         this.adjustedtimestamp = null;
         this.adjustmentType = null;
-        this.eventTypeId = eventTypeId;
-        this.eventType = getEventTypeFromId(eventTypeId); // Map eventTypeId to EventType
+
     }
 
     
@@ -62,21 +60,16 @@ public class Punch {
     public String getBadgeid() {
         return badgeid;
     }
-
-    public LocalDateTime getOriginaltimestamp() {
-        return originaltimestamp;
+    public LocalDateTime getTimestamp(){
+        return timestamp;
     }
-
+    
     public LocalDateTime getAdjustedtimestamp() {
         return adjustedtimestamp;
     }
     
     public PunchAdjustmentType getadjustmentType(){
         return adjustmentType;
-    }
-
-    public int getEventTypeId() {
-        return eventTypeId;
     }
 
     public EventType getEventType() {
@@ -94,9 +87,7 @@ public class Punch {
     
     public String printOriginal() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
-        String timestamp = originaltimestamp.format(formatter);
 
-        
         String punchType = eventType.toString().replace("_", " ");
 
         return String.format("#%s %s: %S", badgeid, punchType, timestamp);
@@ -116,7 +107,7 @@ public class Punch {
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
-        String originaltime = originaltimestamp.format(formatter);
+        String originaltime = timestamp.format(formatter);
         String result = String.format("#%s: Terminal %d, Original Timestamp: %s", 
                                        badgeid, 
                                        terminalid, 
@@ -129,7 +120,7 @@ public class Punch {
         return result;
     }
     public void adjust(Shift s){
-        LocalTime punchTime=originaltimestamp.toLocalTime();
+        LocalTime punchTime=timestamp.toLocalTime();
         LocalTime start=s.getStart();
         LocalTime stop=s.getStop();
         LocalTime lunchstart=s.getlunchStart();
@@ -138,10 +129,10 @@ public class Punch {
         int graceperiod=s.getgracePeriod();
         int dockpenalty=s.getdockPenalty();
                 
-    DayOfWeek day = originaltimestamp.getDayOfWeek();
+    DayOfWeek day=timestamp.getDayOfWeek();
 
     if(day==DayOfWeek.SATURDAY||day==DayOfWeek.SUNDAY){
-        adjustedtimestamp=roundToNearestInterval(originaltimestamp,roundinterval);
+        adjustedtimestamp=roundToNearestInterval(timestamp,roundinterval);
         adjustmentType=PunchAdjustmentType.INTERVAL_ROUND;
         return;
     }        
@@ -150,53 +141,53 @@ public class Punch {
         
         if(eventType==EventType.CLOCK_IN){
             if(punchTime.isBefore(start)){
-                adjustedtimestamp=originaltimestamp.with(start);
+                adjustedtimestamp=timestamp.with(start);
                 adjustmentType=PunchAdjustmentType.SHIFT_START;
                 
             }else if(punchTime.isBefore(start.plusMinutes(graceperiod))){
-                adjustedtimestamp=originaltimestamp.with(start);
+                adjustedtimestamp=timestamp.with(start);
                 adjustmentType=PunchAdjustmentType.SHIFT_START;
                 
             }else if (punchTime.isAfter(start)&&punchTime.isBefore(start.plusMinutes(dockpenalty))) {
-                adjustedtimestamp=originaltimestamp.with(start.plusMinutes(dockpenalty));
+                adjustedtimestamp=timestamp.with(start.plusMinutes(dockpenalty));
                 adjustmentType=PunchAdjustmentType.SHIFT_DOCK;      
                 
         }else if(punchTime.isBefore(start.minusMinutes(roundinterval))){
-                adjustedtimestamp=roundToNearestInterval(originaltimestamp,roundinterval);                
+                adjustedtimestamp=roundToNearestInterval(timestamp,roundinterval);                
                 adjustmentType=PunchAdjustmentType.INTERVAL_ROUND;                 
                 
             }else{
-                adjustedtimestamp=originaltimestamp;                
+                adjustedtimestamp=timestamp;                
                 adjustmentType=PunchAdjustmentType.NONE;                              
             }
             
         }else if(eventType==EventType.CLOCK_OUT){
             if (punchTime.isAfter(stop)&&punchTime.isBefore(stop.plusMinutes(graceperiod))){
-                adjustedtimestamp=originaltimestamp.with(stop);
+                adjustedtimestamp=timestamp.with(stop);
                 adjustmentType=PunchAdjustmentType.SHIFT_STOP;
                 
         }else if(punchTime.isAfter(stop.minusMinutes(dockpenalty))&&punchTime.isBefore(stop)){
-                adjustedtimestamp=originaltimestamp.with(stop);
+                adjustedtimestamp=timestamp.with(stop);
                 adjustmentType=PunchAdjustmentType.SHIFT_DOCK;                
                 
         }else if(punchTime.isAfter(stop.minusMinutes(graceperiod))&&punchTime.isBefore(stop)){
-                adjustedtimestamp=originaltimestamp.with(stop);
+                adjustedtimestamp=timestamp.with(stop);
                 adjustmentType=PunchAdjustmentType.SHIFT_STOP;
                                                                        
         }else if(punchTime.isBefore(stop.minusMinutes(roundinterval))){
-                adjustedtimestamp=originaltimestamp.with(stop).withMinute(15);
+                adjustedtimestamp=timestamp.with(stop).withMinute(15);
                 adjustmentType=PunchAdjustmentType.INTERVAL_ROUND;        
             }else{
-                adjustedtimestamp=roundToNearestInterval(originaltimestamp,roundinterval);
+                adjustedtimestamp=roundToNearestInterval(timestamp,roundinterval);
                 adjustmentType=PunchAdjustmentType.NONE;
             }
         }
         if(punchTime.isAfter(lunchstart)&&punchTime.isBefore(lunchstop)){
             if (eventType==EventType.CLOCK_IN){
-                adjustedtimestamp=originaltimestamp.with(lunchstop);
+                adjustedtimestamp=timestamp.with(lunchstop);
                 adjustmentType=PunchAdjustmentType.LUNCH_STOP;
             }else if(eventType==EventType.CLOCK_OUT){
-                adjustedtimestamp=originaltimestamp.with(lunchstart);
+                adjustedtimestamp=timestamp.with(lunchstart);
                 adjustmentType=PunchAdjustmentType.LUNCH_START;
             }
         }
