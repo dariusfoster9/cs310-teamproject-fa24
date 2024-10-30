@@ -157,24 +157,31 @@ public class Punch {
                 adjustedtimestamp=originaltimestamp.with(start);
                 adjustmentType=PunchAdjustmentType.SHIFT_START;
                 
-            }else if (punchTime.isBefore(start.plusMinutes(dockpenalty))) {
+            }else if (punchTime.isAfter(start)&&punchTime.isBefore(start.plusMinutes(dockpenalty))) {
                 adjustedtimestamp=originaltimestamp.with(start.plusMinutes(dockpenalty));
                 adjustmentType=PunchAdjustmentType.SHIFT_DOCK;      
                 
-            }else{
+        }else if(punchTime.isBefore(start.minusMinutes(roundinterval))){
                 adjustedtimestamp=roundToNearestInterval(originaltimestamp,roundinterval);                
+                adjustmentType=PunchAdjustmentType.INTERVAL_ROUND;                 
+                
+            }else{
+                adjustedtimestamp=originaltimestamp;                
                 adjustmentType=PunchAdjustmentType.NONE;                              
             }
             
         }else if(eventType==EventType.CLOCK_OUT){
-            if (punchTime.isAfter(stop)&&punchTime.isBefore(stop.plusMinutes(roundinterval))){
+            if (punchTime.isAfter(stop)&&punchTime.isBefore(stop.plusMinutes(graceperiod))){
                 adjustedtimestamp=originaltimestamp.with(stop);
                 adjustmentType=PunchAdjustmentType.SHIFT_STOP;
                 
         }else if(punchTime.isAfter(stop.minusMinutes(dockpenalty))&&punchTime.isBefore(stop)){
-                adjustedtimestamp=originaltimestamp.with(stop.minusMinutes(dockpenalty));
+                adjustedtimestamp=originaltimestamp.with(stop);
                 adjustmentType=PunchAdjustmentType.SHIFT_DOCK;
-
+                                                               
+        }else if(punchTime.isBefore(stop.minusMinutes(roundinterval))){
+                adjustedtimestamp=originaltimestamp.with(stop);
+                adjustmentType=PunchAdjustmentType.INTERVAL_ROUND;        
             }else{
                 adjustedtimestamp=roundToNearestInterval(originaltimestamp,roundinterval);
                 adjustmentType=PunchAdjustmentType.NONE;
@@ -190,7 +197,7 @@ public class Punch {
             }
         }
     }
-    private LocalDateTime roundToNearestInterval(LocalDateTime time, int intervalMinutes) {
+    private LocalDateTime roundToNearestInterval(LocalDateTime time,int intervalMinutes) {
         long minutes=time.getMinute();
         long quotient=minutes/intervalMinutes;
         long remainder=minutes%intervalMinutes;
