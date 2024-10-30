@@ -177,10 +177,14 @@ public class Punch {
                 
         }else if(punchTime.isAfter(stop.minusMinutes(dockpenalty))&&punchTime.isBefore(stop)){
                 adjustedtimestamp=originaltimestamp.with(stop);
-                adjustmentType=PunchAdjustmentType.SHIFT_DOCK;
-                                                               
-        }else if(punchTime.isBefore(stop.minusMinutes(roundinterval))){
+                adjustmentType=PunchAdjustmentType.SHIFT_DOCK;                
+                
+        }else if(punchTime.isAfter(stop.minusMinutes(graceperiod))&&punchTime.isBefore(stop)){
                 adjustedtimestamp=originaltimestamp.with(stop);
+                adjustmentType=PunchAdjustmentType.SHIFT_STOP;
+                                                                       
+        }else if(punchTime.isBefore(stop.minusMinutes(roundinterval))){
+                adjustedtimestamp=originaltimestamp.with(stop).withMinute(15);
                 adjustmentType=PunchAdjustmentType.INTERVAL_ROUND;        
             }else{
                 adjustedtimestamp=roundToNearestInterval(originaltimestamp,roundinterval);
