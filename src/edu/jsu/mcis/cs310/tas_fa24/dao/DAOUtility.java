@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import com.github.cliftonlabs.json_simple.*;
 import edu.jsu.mcis.cs310.tas_fa24.Punch;
 import edu.jsu.mcis.cs310.tas_fa24.Shift;
+import edu.jsu.mcis.cs310.tas_fa24.EventType;
 
 /**
  * 
@@ -25,11 +26,11 @@ public final class DAOUtility {
         for (Punch punch : dailypunchlist) {
             
             // Handle CLOCK IN punch
-            if (punch.getEventTypeId() == 1) {
+            if (punch.getEventType() == EventType.CLOCK_IN) {
                 clockIn = punch;
             }
             // Handle CLOCK OUT punch
-            else if (punch.getEventTypeId() == 0 && clockIn != null) {
+            else if (punch.getEventType() == EventType.CLOCK_OUT && clockIn != null) {
                 
                 // Calculate minutes between CLOCK IN and CLOCK OUT
                 Duration duration = Duration.between(clockIn.getAdjustedtimestamp(), punch.getAdjustedtimestamp());
