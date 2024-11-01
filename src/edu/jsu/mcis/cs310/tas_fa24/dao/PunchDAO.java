@@ -2,14 +2,16 @@ package edu.jsu.mcis.cs310.tas_fa24.dao;
 
 import edu.jsu.mcis.cs310.tas_fa24.Badge;
 import edu.jsu.mcis.cs310.tas_fa24.Punch;
-import edu.jsu.mcis.cs310.tas_fa24.EventType; // Import EventType enum
+import edu.jsu.mcis.cs310.tas_fa24.EventType; 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class PunchDAO {
 
@@ -45,34 +47,28 @@ public class PunchDAO {
                         LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
                         int eventTypeId = rs.getInt("eventtypeid");
 
-                        
                         EventType eventType = EventType.values()[eventTypeId];
 
-                        
                         Punch punchFromDB = new Punch(id, terminalid, badgeid, originalTimestamp, eventType.ordinal());
 
                         punch = punchFromDB;
                     }
                 }
             }
-        } 
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new DAOException(e.getMessage());
-        } 
-        finally {
+        } finally {
             if (rs != null) {
                 try {
                     rs.close();
-                } 
-                catch (SQLException e) {
+                } catch (SQLException e) {
                     throw new DAOException(e.getMessage());
                 }
             }
             if (ps != null) {
                 try {
                     ps.close();
-                } 
-                catch (SQLException e) {
+                } catch (SQLException e) {
                     throw new DAOException(e.getMessage());
                 }
             }
@@ -85,23 +81,17 @@ public class PunchDAO {
         ArrayList<Punch>list = new ArrayList<Punch>();
         PreparedStatement ps = null;
         ResultSet rs = null;
-        
-        try {
 
+        try {
             Connection conn = daoFactory.getConnection();
 
             if (conn.isValid(0)) {
-
                 ps = conn.prepareStatement(QUERY_LIST);
                 ps.setString(1, badgeid.getId());
                 ps.setDate(2, java.sql.Date.valueOf(date));
 
 
-                boolean hasresults = ps.execute();
-
-                if (hasresults) {
-
-                    rs = ps.getResultSet();
+                rs = ps.executeQuery();
 
                     while (rs.next()) {
                         
@@ -117,15 +107,10 @@ public class PunchDAO {
                     }
 
                 }
-
-            }
-
+            
         } catch (SQLException e) {
-
             throw new DAOException(e.getMessage());
-
         } finally {
-
             if (rs != null) {
                 try {
                     rs.close();
@@ -140,7 +125,6 @@ public class PunchDAO {
                     throw new DAOException(e.getMessage());
                 }
             }
-
         }
         return list;
     }
