@@ -5,6 +5,7 @@ import edu.jsu.mcis.cs310.tas_fa24.dao.DAOUtility;
 import edu.jsu.mcis.cs310.tas_fa24.dao.AbsenteeismDAO;
 import edu.jsu.mcis.cs310.tas_fa24.dao.EmployeeDAO;
 import edu.jsu.mcis.cs310.tas_fa24.dao.DAOFactory;
+import edu.jsu.mcis.cs310.tas_fa24.Shift;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -40,7 +41,7 @@ public class AbsenteeismTest {
         
         /* Get Pay Period Punch List */
         
-        LocalDate ts = p.getOriginaltimestamp().toLocalDate();
+        LocalDate ts = p.getTimestamp().toLocalDate();
         LocalDate begin = ts.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         LocalDate end = begin.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
         
