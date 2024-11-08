@@ -17,6 +17,7 @@ public class Punch {
     private LocalDateTime adjustedtimestamp; 
     private PunchAdjustmentType adjustmentType; 
     private EventType eventType;
+    private Badge badge;
 
     // Constructor for a new punch (without ID)
     public Punch(int terminalid, String badgeid, int eventTypeId) {
@@ -76,6 +77,10 @@ public class Punch {
 
     public EventType getEventType() {
         return eventType;
+    }
+    
+    public Badge getBadge(){
+        return badge;
     }
 
     public void setAdjustedTimestamp(LocalDateTime adjustedtimestamp) {
