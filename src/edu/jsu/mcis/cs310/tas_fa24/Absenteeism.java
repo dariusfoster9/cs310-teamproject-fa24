@@ -2,6 +2,7 @@ package edu.jsu.mcis.cs310.tas_fa24;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 public class Absenteeism {
@@ -31,10 +32,12 @@ public class Absenteeism {
     
     @Override
     public String toString(){
-       StringBuilder str = new StringBuilder();
-       /* Temporary Formatting until DAO is added*/
        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+        String formattedDate = payperiod.format(formatter);
+        String percentageStr = String.format("%.2f", percentage.doubleValue());
+    
+        return "#" + employee.getId() + " (Pay Period Starting " + formattedDate + "): " + percentageStr;
        
-       return str.toString();
     }
 }
