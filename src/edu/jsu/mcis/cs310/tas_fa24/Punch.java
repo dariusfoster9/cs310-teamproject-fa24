@@ -12,7 +12,6 @@ public class Punch {
     // Attributes
     private final int id; 
     private final int terminalid; 
-    private final String badgeid; 
     private LocalDateTime timestamp; 
     private LocalDateTime adjustedtimestamp; 
     private PunchAdjustmentType adjustmentType; 
@@ -20,10 +19,10 @@ public class Punch {
     private Badge badge;
 
     // Constructor for a new punch (without ID)
-    public Punch(int terminalid, String badgeid, int eventTypeId) {
+    public Punch(int terminalid, Badge badge, int eventTypeId) {
         this.id = -1;
         this.terminalid = terminalid;
-        this.badgeid = badgeid;
+        this.badge = badge;
         this.timestamp = LocalDateTime.now();
         this.adjustedtimestamp = null;
         this.adjustmentType = null;
@@ -32,15 +31,16 @@ public class Punch {
     }
 
     
-    public Punch(int id, int terminalid, String badgeid, LocalDateTime timestamp, int eventTypeId) {
+    public Punch(int id, int terminalid, String badge, LocalDateTime timestamp, int eventTypeId) {
         this.id = id;
         this.terminalid = terminalid;
-        this.badgeid = badgeid;
+        this.badge = badge;
         this.timestamp = timestamp;
         this.eventType = getEventTypeFromId(eventTypeId); 
         this.adjustedtimestamp = null;
         this.adjustmentType = null;
-
+        
+        
     }
 
     
@@ -61,7 +61,7 @@ public class Punch {
     }
 
     public String getBadgeid() {
-        return badgeid;
+        return badge;
     }
     public LocalDateTime getTimestamp(){
         return timestamp;
@@ -97,7 +97,7 @@ public class Punch {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
         String formattedTimestamp = timestamp.format(formatter);
         String punchType = eventType.toString().replace("_", " ");
-        return String.format("#%s %s: %S", badgeid, punchType, formattedTimestamp);
+        return String.format("#%s %s: %S", badge, punchType, formattedTimestamp);
 
     }
     
@@ -106,7 +106,7 @@ public class Punch {
         if (adjustedtimestamp!=null){
             String adjustedTime=adjustedtimestamp.format(formatter).toUpperCase();
             String punchType=eventType.toString().replace("_"," ");
-            return String.format("#%s %s: %s (%s)",badgeid,punchType,adjustedTime,adjustmentType);
+            return String.format("#%s %s: %s (%s)",badge,punchType,adjustedTime,adjustmentType);
         }else{
             return("No Adjustments made");
         }
@@ -117,7 +117,7 @@ public class Punch {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
         String originaltime = timestamp.format(formatter);
         String result = String.format("#%s: Terminal %d, Original Timestamp: %s", 
-                                       badgeid, 
+                                       badge, 
                                        terminalid, 
                                        originaltime);
  

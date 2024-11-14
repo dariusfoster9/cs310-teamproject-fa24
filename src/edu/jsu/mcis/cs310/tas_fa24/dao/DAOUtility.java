@@ -8,6 +8,7 @@ import com.github.cliftonlabs.json_simple.*;
 import edu.jsu.mcis.cs310.tas_fa24.Punch;
 import edu.jsu.mcis.cs310.tas_fa24.Shift;
 import edu.jsu.mcis.cs310.tas_fa24.EventType;
+import java.math.BigDecimal;
 
 /**
  * 
@@ -49,6 +50,25 @@ public final class DAOUtility {
         
         return totalMinutes;
     }
+     
+    public static BigDecimal calculateAbsenteeism(ArrayList<Punch> punchlist, Shift s){
+         
+        int totalMinutes=0;
+        int scheduledMinutes=s.getshiftDuration()*10;
 
+        Map<LocalDate, ArrayList<Punch>>dailyPunches=new HashMap<>();
+
+        for (Punch punch:punchlist){
+            LocalDate date=punch.getTimestamp().toLocalDate();
+            dailyPunches.putIfAbsent(date,new ArrayList<>());
+            dailyPunches.get(date).add(punch);
+            }
+        for (ArrayList<Punch>dailyPunchList:dailyPunches.values()){
+        totalMinutes+=calculateTotalMinutes(dailyPunchList,s);
+            }   
+        int missedMinutes=scheduledMinutes-totalMinutes;
+        BigDecimal absenteeismPercentage=BigDecimal.valueOf((double) missedMinutes/scheduledMinutes*100).setScale(2,BigDecimal.ROUND_HALF_UP);
+        return absenteeismPercentage;
+    }
 
 }

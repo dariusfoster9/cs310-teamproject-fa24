@@ -60,7 +60,7 @@ public class AbsenteeismTest {
         /* Insert Absenteeism Into Database */
         
         Absenteeism a1 = new Absenteeism(e, ts, percentage);
-        absenteeismDAO.create(a1);
+        AbsenteeismDAO.create(a1);
         
         /* Retrieve Absenteeism From Database */
         
@@ -88,7 +88,7 @@ public class AbsenteeismTest {
         
         /* Get Pay Period Punch List */
         
-        LocalDate ts = p.getOriginaltimestamp().toLocalDate();
+        LocalDate ts = p.getTimestamp().toLocalDate();
         LocalDate begin = ts.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         LocalDate end = begin.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
         
@@ -137,7 +137,7 @@ public class AbsenteeismTest {
         
         /* Get Pay Period Punch List */
         
-        LocalDate ts = p.getOriginaltimestamp().toLocalDate();
+        LocalDate ts = p.getTimestamp().toLocalDate();
         LocalDate begin = ts.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         LocalDate end = begin.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
         
@@ -157,7 +157,7 @@ public class AbsenteeismTest {
         /* Insert Absenteeism Into Database */
         
         Absenteeism a1 = new Absenteeism(e, ts, percentage);
-        absenteeismDAO.create(a1);
+        AbsenteeismDAO.create(a1);
         
         /* Retrieve Absenteeism From Database */
         

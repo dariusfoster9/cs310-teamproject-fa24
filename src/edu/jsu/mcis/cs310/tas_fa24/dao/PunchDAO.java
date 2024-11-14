@@ -43,13 +43,13 @@ public class PunchDAO {
 
                     while (rs.next()) {
                         int terminalid = rs.getInt("terminalid");
-                        String badgeid = rs.getString("badgeid");
+                        String badge = rs.getString("badgeid");
                         LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
                         int eventTypeId = rs.getInt("eventtypeid");
 
                         EventType eventType = EventType.values()[eventTypeId];
 
-                        Punch punchFromDB = new Punch(id, terminalid, badgeid, originalTimestamp, eventType.ordinal());
+                        Punch punchFromDB = new Punch(id, terminalid, badge, originalTimestamp, eventType.ordinal());
 
                         punch = punchFromDB;
                     }
@@ -76,7 +76,7 @@ public class PunchDAO {
 
         return punch;
     }
-    public ArrayList<Punch> list(Badge badgeid, LocalDate date){
+    public ArrayList<Punch> list(Badge badge, LocalDate date){
         
         ArrayList<Punch>list = new ArrayList<Punch>();
         PreparedStatement ps = null;
@@ -87,7 +87,7 @@ public class PunchDAO {
 
             if (conn.isValid(0)) {
                 ps = conn.prepareStatement(QUERY_LIST);
-                ps.setString(1, badgeid.getId());
+                ps.setString(1, badge.getId());
                 ps.setDate(2, java.sql.Date.valueOf(date));
 
 
@@ -101,7 +101,7 @@ public class PunchDAO {
                         LocalDateTime timestamp = rs.getTimestamp("timestamp").toLocalDateTime();
                         EventType eventType = EventType.values()[eventTypeId];
 
-                        Punch listForaDay = new Punch(id, terminalid, badgeid.getId(), timestamp, eventType.ordinal());
+                        Punch listForaDay = new Punch(id, terminalid, badge.getId(), timestamp, eventType.ordinal());
                         list.add(listForaDay);
                      
                     }
