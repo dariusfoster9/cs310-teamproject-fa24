@@ -31,7 +31,7 @@ public class Punch {
     }
 
     
-    public Punch(int id, int terminalid, String badge, LocalDateTime timestamp, int eventTypeId) {
+    public Punch(int id, int terminalid, Badge badge, LocalDateTime timestamp, int eventTypeId) {
         this.id = id;
         this.terminalid = terminalid;
         this.badge = badge;
@@ -60,9 +60,6 @@ public class Punch {
         return terminalid;
     }
 
-    public String getBadgeid() {
-        return badge;
-    }
     public LocalDateTime getTimestamp(){
         return timestamp;
     }

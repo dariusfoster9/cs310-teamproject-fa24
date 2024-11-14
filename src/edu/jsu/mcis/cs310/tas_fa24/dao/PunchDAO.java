@@ -43,7 +43,7 @@ public class PunchDAO {
 
                     while (rs.next()) {
                         int terminalid = rs.getInt("terminalid");
-                        String badge = rs.getString("badgeid");
+                        Badge badge = daoFactory.getBadgeDAO().find(rs.getString("badgeid"));
                         LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
                         int eventTypeId = rs.getInt("eventtypeid");
 
@@ -101,7 +101,7 @@ public class PunchDAO {
                         LocalDateTime timestamp = rs.getTimestamp("timestamp").toLocalDateTime();
                         EventType eventType = EventType.values()[eventTypeId];
 
-                        Punch listForaDay = new Punch(id, terminalid, badge.getId(), timestamp, eventType.ordinal());
+                        Punch listForaDay = new Punch(id, terminalid, badge, timestamp, eventType.ordinal());
                         list.add(listForaDay);
                      
                     }
@@ -144,7 +144,8 @@ public class PunchDAO {
     public int create(Punch punch) {
         
         int punchId = -1;  
-        PreparedStatement ps = null;    ResultSet rs = null;
+        PreparedStatement ps = null;    
+        ResultSet rs = null;
 
         try {
             Connection conn = daoFactory.getConnection();
@@ -156,7 +157,7 @@ public class PunchDAO {
 
 
                 ps.setInt(1, punch.getTerminalid());  
-                ps.setString(2, punch.getBadgeid());  
+                ps.setString(2, punch.getBadge().getId());  
                 ps.setTimestamp(3, Timestamp.valueOf(punch.getTimestamp()));
 
 
