@@ -37,7 +37,7 @@ public class JSONTest {
             Shift s = shiftDAO.find(b);
 
             /* Get/Adjust Daily Punch List */
-            ArrayList<Punch> dailypunchlist = punchDAO.list(b, p.getOriginaltimestamp().toLocalDate());
+            ArrayList<Punch> dailypunchlist = punchDAO.list(b, p.getTimestamp().toLocalDate());
 
             for (Punch punch : dailypunchlist) {
                 punch.adjust(s);
@@ -79,7 +79,7 @@ public class JSONTest {
             Shift s = shiftDAO.find(b);
 
             /* Get/Adjust Daily Punch List */
-            ArrayList<Punch> dailypunchlist = punchDAO.list(b, p.getOriginaltimestamp().toLocalDate());
+            ArrayList<Punch> dailypunchlist = punchDAO.list(b, p.getTimestamp().toLocalDate());
 
             for (Punch punch : dailypunchlist) {
                 punch.adjust(s);
@@ -120,7 +120,7 @@ public class JSONTest {
             Shift s = shiftDAO.find(b);
 
             /* Get/Adjust Daily Punch List */
-            ArrayList<Punch> dailypunchlist = punchDAO.list(b, p.getOriginaltimestamp().toLocalDate());
+            ArrayList<Punch> dailypunchlist = punchDAO.list(b, p.getTimestamp().toLocalDate());
 
             for (Punch punch : dailypunchlist) {
                 punch.adjust(s);

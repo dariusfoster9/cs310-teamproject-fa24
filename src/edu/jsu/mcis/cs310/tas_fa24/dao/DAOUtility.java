@@ -19,7 +19,7 @@ import java.math.BigDecimal;
  */
 public final class DAOUtility {
 
-     public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift) {
+    public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift) {
         
         int totalMinutes = 0;
         Punch clockIn = null;
@@ -70,5 +70,40 @@ public final class DAOUtility {
         BigDecimal absenteeismPercentage=BigDecimal.valueOf((double) missedMinutes/scheduledMinutes*100).setScale(2,BigDecimal.ROUND_HALF_UP);
         return absenteeismPercentage;
     }
+    
+    public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist) {
+        
+        ArrayList<HashMap<String, String>> jsonData = new ArrayList<>();
 
+        for (Punch punch : dailypunchlist) {
+            
+            HashMap<String, String> punchData = new HashMap<>();
+
+            punchData.put("id", String.valueOf(punch.getId()));
+            punchData.put("badgeid", punch.getBadge().getId());
+            punchData.put("terminalid", String.valueOf(punch.getTerminalid()));
+            punchData.put("punchtype", punch.getEventType().toString());
+
+
+            punchData.put("adjustmenttype", punch.getadjustmentType().toString().replace("_", " "));
+
+            String original = punch.printOriginal().replaceAll("#.*?: ", "").trim();
+            punchData.put("originaltimestamp", original);
+            
+            String adjusted = punch.printAdjusted();
+            if (!adjusted.equals("No Adjustments made")) {
+                
+                adjusted = adjusted.replaceAll("#.*?: ", "").replaceAll(" \\(.*?\\)", "").trim();
+                
+                punchData.put("adjustedtimestamp", adjusted);
+                
+            } else {
+                punchData.put("adjustedtimestamp", "No Adjustments made");
+            }
+            
+            jsonData.add(punchData);
+    }
+ 
+    return Jsoner.serialize(jsonData);
+}
 }

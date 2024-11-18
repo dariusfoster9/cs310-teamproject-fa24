@@ -15,7 +15,8 @@ import java.time.LocalDate;
 */
 public class AbsenteeismDAO {
     private static final String QUERY_FIND = "SELECT * FROM absenteeism WHERE employeeid = ? AND payperiod = ?";
-    private static final String QUERY_CREATE = "INSERT INTO absenteeism (employee, payperiod, percentage) VALUES (?, ?, ?)";
+    private static final String QUERY_INSERT = "INSERT INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?)";
+    private static final String QUERY_UPDATE = "UPDATE absenteeism SET percentage = ? WHERE employeeid = ? AND payperiod = ?";
     private final DAOFactory daoFactory;
  
     AbsenteeismDAO(DAOFactory daoFactory) {
@@ -38,7 +39,7 @@ public class AbsenteeismDAO {
             if (conn.isValid(0)) {
  
                 ps = conn.prepareStatement(QUERY_FIND);
-                ps.setString(1, employee.getFirstname());
+                ps.setInt(1, employee.getId());
                 ps.setDate(2, java.sql.Date.valueOf(payperiod));
                 boolean hasresults = ps.execute();
  
@@ -82,28 +83,38 @@ public class AbsenteeismDAO {
         return absenteeism;
  
     }
-     public Absenteeism create (Employee employee, LocalDate payperiod) {
+    public Absenteeism create (Absenteeism a1) {
+
  
-        Absenteeism absenteeism = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
  
-        try {
+            try {
  
             Connection conn = daoFactory.getConnection();
  
             if (conn.isValid(0)) {
+            ps = conn.prepareStatement(QUERY_FIND);
+            ps.setInt(1, a1.getEmployee().getId());
+            ps.setDate(2, java.sql.Date.valueOf(a1.getPayperiod()));
  
-                ps = conn.prepareStatement(QUERY_CREATE);
-                ps.setString(1, employee.getFirstname());
-                ps.setDate(2, java.sql.Date.valueOf(payperiod));
-                int affectedRows = ps.executeUpdate();
-                if (affectedRows == 1) {
+            int updateCount = ps.executeUpdate();
+                if (updateCount > 0) {
                     rs = ps.getGeneratedKeys();
-                    if (rs.next()) {
-                        BigDecimal percentage = rs.getBigDecimal("percentage");
-                        absenteeism = new Absenteeism(employee, payperiod, percentage);
- 
+                if (rs.next()) {
+                    // updates the existing the records
+                     ps = conn.prepareStatement(QUERY_UPDATE);
+                        ps.setInt(1, a1.getEmployee().getId());
+                        ps.setDate(2, java.sql.Date.valueOf(a1.getPayperiod()));
+                        ps.setBigDecimal(3, a1.getPercentage());
+                        ps.executeUpdate();
+                } else {
+                    // Inserts the new record
+                    ps = conn.prepareStatement(QUERY_INSERT);
+                        ps.setInt(1, a1.getEmployee().getId());
+                        ps.setDate(2, java.sql.Date.valueOf(a1.getPayperiod()));
+                        ps.setBigDecimal(3, a1.getPercentage());
+                        ps.executeUpdate();
                     }
  
                 }
@@ -133,7 +144,7 @@ public class AbsenteeismDAO {
  
         }
  
-        return absenteeism;
+        return a1;
  
     }
 }
