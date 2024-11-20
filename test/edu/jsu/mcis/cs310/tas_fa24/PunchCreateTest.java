@@ -26,13 +26,13 @@ public class PunchCreateTest {
  
         
         Badge badge = badgeDAO.find("021890C0");  
-        Punch p1 = new Punch(103, badge.getId(), 1);  
+        Punch p1 = new Punch(103, badge, 1);  
  
         
         LocalDateTime ots, rts;
  
         
-        String badgeid = p1.getBadgeid();  
+        String badgeid = p1.getBadge().getId();  
         ots = p1.getTimestamp();   
         int terminalid = p1.getTerminalid();  
         EventType eventType = p1.getEventType();  
@@ -44,7 +44,7 @@ public class PunchCreateTest {
         Punch p2 = punchDAO.find(punchid);
  
         
-        assertEquals(badgeid, p2.getBadgeid());   
+        assertEquals(badgeid, p2.getBadge().getId());   
         rts = p2.getTimestamp();          
         assertEquals(terminalid, p2.getTerminalid());    
 

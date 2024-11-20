@@ -82,11 +82,14 @@ public class AbsenteeismTest {
         }
         /* Compute Pay Period Total Absenteeism */
         BigDecimal percentage = DAOUtility.calculateAbsenteeism(punchlist, s);
+        
         /* Insert Absenteeism Into Database */
         Absenteeism a1 = new Absenteeism(e, ts, percentage);
         absenteeismDAO.create(a1);
+        
         /* Retrieve Absenteeism From Database */
         Absenteeism a2 = absenteeismDAO.find(e, ts);
+        
         /* Compare to Expected Value */
         assertEquals("#F1EE0555 (Pay Period Starting 08-05-2018): -20.00%", a2.toString());
     }

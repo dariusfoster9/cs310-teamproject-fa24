@@ -53,19 +53,23 @@ public final class DAOUtility {
      
     public static BigDecimal calculateAbsenteeism(ArrayList<Punch> punchlist, Shift s){
          
-        int totalMinutes=0;
-        int scheduledMinutes=s.getshiftDuration()*10;
+        int totalMinutes = 0;
+        int scheduledMinutes = s.getshiftDuration()*10;
 
         Map<LocalDate, ArrayList<Punch>>dailyPunches=new HashMap<>();
 
         for (Punch punch:punchlist){
-            LocalDate date=punch.getTimestamp().toLocalDate();
-            dailyPunches.putIfAbsent(date,new ArrayList<>());
+            
+            LocalDate date = punch.getTimestamp().toLocalDate();
+            dailyPunches.putIfAbsent(date, new ArrayList<>());
             dailyPunches.get(date).add(punch);
-            }
+            
+        }
+        
         for (ArrayList<Punch>dailyPunchList:dailyPunches.values()){
         totalMinutes+=calculateTotalMinutes(dailyPunchList,s);
-            }   
+        }
+        
         int missedMinutes=scheduledMinutes-totalMinutes;
         BigDecimal absenteeismPercentage=BigDecimal.valueOf((double) missedMinutes/scheduledMinutes*100).setScale(2,BigDecimal.ROUND_HALF_UP);
         return absenteeismPercentage;
@@ -106,4 +110,45 @@ public final class DAOUtility {
  
     return Jsoner.serialize(jsonData);
 }
+    public static String getPunchListPlusTotalsAsJSON(ArrayList<Punch> punchlist, Shift shift) {
+    // Prepare the punch list as JSON data
+        ArrayList<HashMap<String, String>> punchesData = new ArrayList<>();
+
+        for (Punch punch : punchlist) {
+            HashMap<String, String> punchData = new HashMap<>();
+
+            punchData.put("id", String.valueOf(punch.getId()));
+            punchData.put("badgeid", punch.getBadge().getId());
+            punchData.put("terminalid", String.valueOf(punch.getTerminalid()));
+            punchData.put("punchtype", punch.getEventType().toString());
+
+            punchData.put("adjustmenttype", punch.getadjustmentType().toString().replace("_", " "));
+
+            String original = punch.printOriginal().replaceAll("#.*?: ", "").trim();
+            punchData.put("originaltimestamp", original);
+
+            String adjusted = punch.printAdjusted();
+            if (!adjusted.equals("No Adjustments made")) {
+                adjusted = adjusted.replaceAll("#.*?: ", "").replaceAll(" \\(.*?\\)", "").trim();
+                punchData.put("adjustedtimestamp", adjusted);
+            } else {
+                punchData.put("adjustedtimestamp", "No Adjustments made");
+            }
+
+            punchesData.add(punchData);
+        }
+
+        // Calculate total minutes and absenteeism
+        int totalMinutes = calculateTotalMinutes(punchlist, shift);
+        BigDecimal absenteeism = calculateAbsenteeism(punchlist, shift);
+
+        // Prepare the final JSON structure
+        HashMap<String, Object> json = new HashMap<>();
+        json.put("punchlist", punchesData);
+        json.put("totalminutes", totalMinutes);
+        json.put("absenteeism", absenteeism.toString()); // Convert BigDecimal to String for JSON output
+
+        // Serialize to JSON string
+        return Jsoner.serialize(json);
+    }
 }
