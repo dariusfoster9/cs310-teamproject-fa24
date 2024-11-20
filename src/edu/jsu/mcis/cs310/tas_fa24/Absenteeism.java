@@ -33,11 +33,11 @@ public class Absenteeism {
     @Override
     public String toString(){
        
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("mm-dd-yyyy");
         String formattedDate = payperiod.format(formatter);
         String percentageStr = String.format("%.2f", percentage.doubleValue());
     
-        return "#" + employee.getId() + " (Pay Period Starting " + formattedDate + "): " + percentageStr;
+        return employee.getId() + " (Pay Period Starting " + formattedDate + "): " + percentageStr;
        
     }
 }
