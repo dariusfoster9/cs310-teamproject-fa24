@@ -2,6 +2,7 @@ package edu.jsu.mcis.cs310.tas_fa24.dao;
 
 import edu.jsu.mcis.cs310.tas_fa24.Shift;
 import edu.jsu.mcis.cs310.tas_fa24.Badge;
+import edu.jsu.mcis.cs310.tas_fa24.DailySchedule;
 import java.sql.*;
 import java.time.Duration;
 import java.time.LocalTime;
@@ -34,34 +35,33 @@ public class ShiftDAO {
                     rs=ps.getResultSet();
 
                     if (rs.next()) {
-                        Map<String,Object> info=new HashMap<>();
-                        info.put("id",rs.getInt("id"));
-                        info.put("description",rs.getString("description"));
-                        info.put("start",rs.getString("shiftstart"));
-                        info.put("stop",rs.getString("shiftstop"));
-                        info.put("lunchstart",rs.getString("lunchstart"));
-                        info.put("lunchstop",rs.getString("lunchstop"));
-                        info.put("dockpenalty",rs.getObject("dockpenalty"));
-                        info.put("graceperiod",rs.getObject("graceperiod"));
-                        info.put("roundinterval",rs.getObject("roundinterval"));
-                        
+                        int scheduleId = rs.getInt("id");
+                        String description = rs.getString("description");
+                        LocalTime start = LocalTime.parse(rs.getString("shiftstart"));
+                        LocalTime stop = LocalTime.parse(rs.getString("shiftstop"));
+                        LocalTime lunchStart = LocalTime.parse(rs.getString("lunchstart"));
+                        LocalTime lunchStop = LocalTime.parse(rs.getString("lunchstop"));
+                        int dockPenalty = rs.getInt("dockpenalty");
+                        int gracePeriod = rs.getInt("graceperiod");
+                        int roundInterval = rs.getInt("roundinterval");
                         //-------------------------------------------
-                        LocalTime lunchStartTime=LocalTime.parse(rs.getString("lunchstart"));
-                        LocalTime lunchStopTime=LocalTime.parse(rs.getString("lunchstop"));
-                        int lunchDuration=(int)Duration.between(lunchStartTime, lunchStopTime).toMinutes();
-                        info.put("lunchDuration",lunchDuration);
+                        int lunchDuration = (int) Duration.between(lunchStart, lunchStop).toMinutes();
+                        int shiftDuration = (int) Duration.between(start, stop).toMinutes();
                         //-------------------------------------------
                         
-                        //-------------------------------------------
-                        LocalTime shiftStartTime=LocalTime.parse(rs.getString("shiftstart"));
-                        LocalTime shiftStopTime=LocalTime.parse(rs.getString("shiftstop"));
-                        int shiftDuration=(int)Duration.between(shiftStartTime,shiftStopTime).toMinutes();
-                        info.put("shiftDuration",shiftDuration);
-                        //-------------------------------------------
-                        
-                        
+                        DailySchedule dailySchedule = new DailySchedule(
+                        start,
+                        stop,
+                        lunchStart,
+                        lunchStop,
+                        lunchDuration,
+                        shiftDuration,
+                        roundInterval,
+                        gracePeriod,
+                        dockPenalty
+                        );
 
-                        shift=new Shift(info);
+                        shift = new Shift(scheduleId, description, dailySchedule);
                     }
                 }
             }
