@@ -9,6 +9,8 @@ import edu.jsu.mcis.cs310.tas_fa24.Punch;
 import edu.jsu.mcis.cs310.tas_fa24.Shift;
 import edu.jsu.mcis.cs310.tas_fa24.EventType;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 /**
  * 
@@ -51,27 +53,11 @@ public final class DAOUtility {
         return totalMinutes;
     }
      
-    public static BigDecimal calculateAbsenteeism(ArrayList<Punch> punchlist, Shift s){
-         
-        int totalMinutes = 0;
-        int scheduledMinutes = s.getshiftDuration()*10;
-
-        Map<LocalDate, ArrayList<Punch>>dailyPunches=new HashMap<>();
-
-        for (Punch punch:punchlist){
-            
-            LocalDate date = punch.getTimestamp().toLocalDate();
-            dailyPunches.putIfAbsent(date, new ArrayList<>());
-            dailyPunches.get(date).add(punch);
-            
-        }
-        
-        for (ArrayList<Punch>dailyPunchList:dailyPunches.values()){
-        totalMinutes+=calculateTotalMinutes(dailyPunchList,s);
-        }
-        
-        int missedMinutes=scheduledMinutes-totalMinutes;
-        BigDecimal absenteeismPercentage=BigDecimal.valueOf((double) missedMinutes/scheduledMinutes*100).setScale(2,BigDecimal.ROUND_HALF_UP);
+    public static BigDecimal calculateAbsenteeism(ArrayList<Punch> punchlist, Shift shift){
+            int minutesScheduled= shift.getshiftDuration();
+            int minutesWorked= calculateTotalMinutes(punchlist, shift);
+        BigDecimal ratio = (new BigDecimal(minutesWorked)).divide( new BigDecimal(minutesScheduled), new MathContext(16, RoundingMode.UP));
+        BigDecimal absenteeismPercentage= (new BigDecimal("100.0")).subtract(ratio.multiply(new BigDecimal("100.0")));
         return absenteeismPercentage;
     }
     

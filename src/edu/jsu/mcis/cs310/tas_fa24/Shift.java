@@ -9,27 +9,12 @@ public class Shift{
     private final int id;
     private final String description;
     private final DailySchedule defaultschedule;
-    private HashMap<Integer, DailySchedule> dailySchedules;
     
     public Shift(int id, String description, DailySchedule defaultschedule){
         this.id = id;
         this.description = description;
         this.defaultschedule = defaultschedule;
-        this.dailySchedules = new HashMap<>();
     }
-/*    
-    private void initializedDefaultSchedule(){
-        
-        for (DayOfWeek day : DayOfWeek.values()) {
-            
-            if (day != DayOfWeek.SUNDAY && day != DayOfWeek.SATURDAY) {  
-                int dayOfWeekInt = day.getValue();
-                this.dailySchedules.put(dayOfWeekInt, defaultSchedDay(day));
-            }
-            
-        }
-    }
-*/    
     
     
     public LocalTime getStart(){
